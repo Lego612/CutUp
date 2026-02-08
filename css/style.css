@@ -10,16 +10,16 @@
     --accent-glow: rgba(255, 255, 0, 0.5);
     --success: #00ff88;
     --danger: #ff3366;
-    
+
     /* Backgrounds */
     --bg-dark: #0a0a12;
     --bg-darker: #050508;
     --bg-card: rgba(15, 15, 25, 0.9);
-    
+
     /* Text */
     --text-primary: #ffffff;
     --text-secondary: #a0a0b0;
-    
+
     /* Fonts */
     --font-display: 'Orbitron', sans-serif;
     --font-body: 'Rajdhani', sans-serif;
@@ -31,7 +31,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -43,7 +44,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: 
+    background:
         radial-gradient(ellipse at 50% 0%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
         radial-gradient(ellipse at 0% 100%, rgba(255, 0, 229, 0.1) 0%, transparent 50%),
         var(--bg-dark);
@@ -62,6 +63,10 @@ body {
     max-height: 100%;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 /* Loading screen */
@@ -105,13 +110,20 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 /* Utility classes for in-game UI */
 .neon-text {
-    text-shadow: 
+    text-shadow:
         0 0 5px currentColor,
         0 0 10px currentColor,
         0 0 20px currentColor;
