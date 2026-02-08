@@ -142,87 +142,61 @@ class GameScene extends Phaser.Scene {
         this.hudContainer = this.add.container(0, 0);
         this.hudContainer.setDepth(100);
 
-        // Top bar background with glassmorphism
+        // Top bar background
         const topBar = this.add.graphics();
-        topBar.fillStyle(0x0a0a18, 0.85);
-        topBar.fillRect(0, 0, width, 75);
-
-        // Accent line at bottom
-        topBar.fillStyle(0xff00e5, 0.6);
-        topBar.fillRect(0, 73, width, 2);
-        topBar.fillStyle(0xff00e5, 0.2);
-        topBar.fillRect(0, 70, width, 3);
-
+        topBar.fillStyle(0x0a0a18, 0.9);
+        topBar.fillRect(0, 0, width, 60);
+        topBar.fillStyle(0xff00e5, 0.8);
+        topBar.fillRect(0, 58, width, 2);
         this.hudContainer.add(topBar);
 
-        // Money display with icon background
-        const moneyBg = this.add.graphics();
-        moneyBg.fillStyle(0x00ff88, 0.1);
-        moneyBg.fillRoundedRect(12, 10, 120, 35, 8);
-        moneyBg.lineStyle(1, 0x00ff88, 0.4);
-        moneyBg.strokeRoundedRect(12, 10, 120, 35, 8);
-        this.hudContainer.add(moneyBg);
-
-        this.moneyText = this.add.text(22, 18, '$0', {
-            fontFamily: 'Orbitron',
-            fontSize: '24px',
+        // Money display
+        this.moneyText = this.add.text(20, 18, '$0', {
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '26px',
             fontStyle: 'bold',
             color: '#00ff88'
         });
         this.hudContainer.add(this.moneyText);
 
         // Combo display
-        this.comboContainer = this.add.container(width / 2, 38);
+        this.comboContainer = this.add.container(width / 2, 30);
         this.comboText = this.add.text(0, 0, '', {
-            fontFamily: 'Orbitron',
-            fontSize: '22px',
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '20px',
             fontStyle: 'bold',
             color: '#ffcc00'
         }).setOrigin(0.5);
         this.comboContainer.add(this.comboText);
         this.hudContainer.add(this.comboContainer);
 
-        // Speed display with background
-        const speedBg = this.add.graphics();
-        speedBg.fillStyle(0x00f5ff, 0.1);
-        speedBg.fillRoundedRect(width - 130, 10, 118, 35, 8);
-        speedBg.lineStyle(1, 0x00f5ff, 0.4);
-        speedBg.strokeRoundedRect(width - 130, 10, 118, 35, 8);
-        this.hudContainer.add(speedBg);
-
-        this.speedText = this.add.text(width - 22, 18, '0 MPH', {
-            fontFamily: 'Orbitron',
-            fontSize: '20px',
+        // Speed display
+        this.speedText = this.add.text(width - 20, 18, '0 MPH', {
+            fontFamily: 'Arial, sans-serif',
+            fontSize: '22px',
             fontStyle: 'bold',
             color: '#00f5ff'
         }).setOrigin(1, 0);
         this.hudContainer.add(this.speedText);
 
         // Boost meter
-        this.createBoostMeter(width - 70, 55);
+        this.createBoostMeter(width - 75, 48);
 
         // Floating text pool for rewards
         this.floatingTexts = [];
     }
 
     createBoostMeter(x, y) {
-        // Boost label
-        const boostLabel = this.add.text(x - 45, y - 1, 'BOOST', {
-            fontFamily: 'Rajdhani',
-            fontSize: '10px',
-            color: '#666680'
-        }).setOrigin(0, 0.5);
-        this.hudContainer.add(boostLabel);
-
-        // Background
+        // Background bar
         this.boostMeterBg = this.add.graphics();
-        this.boostMeterBg.fillStyle(0x1a1a2e, 1);
-        this.boostMeterBg.fillRoundedRect(x - 5, y - 5, 70, 10, 3);
-        this.boostMeterBg.lineStyle(1, 0x3d3d5c, 1);
-        this.boostMeterBg.strokeRoundedRect(x - 5, y - 5, 70, 10, 3);
+        this.boostMeterBg.fillStyle(0x222233, 1);
+        this.boostMeterBg.fillRoundedRect(x, y - 4, 60, 8, 4);
+        this.boostMeterBg.lineStyle(1, 0x444466, 1);
+        this.boostMeterBg.strokeRoundedRect(x, y - 4, 60, 8, 4);
         this.hudContainer.add(this.boostMeterBg);
 
-        this.boostMeterFill = this.add.rectangle(x - 3, y, 0, 6, 0xffff00);
+        // Fill bar
+        this.boostMeterFill = this.add.rectangle(x + 2, y, 0, 4, 0xffcc00);
         this.boostMeterFill.setOrigin(0, 0.5);
         this.hudContainer.add(this.boostMeterFill);
     }
