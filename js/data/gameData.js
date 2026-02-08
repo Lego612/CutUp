@@ -54,8 +54,8 @@ const VEHICLES = {
         description: 'Reliable and balanced. Perfect for beginners.',
         color: 0x3498db,
         baseStats: {
-            topSpeed: 80,
-            acceleration: 70,
+            topSpeed: 60,      // Slow starter car
+            acceleration: 50,
             handling: 85,
             durability: 100,
             earnings: 1.0
@@ -69,8 +69,8 @@ const VEHICLES = {
         description: 'Nimble and quick. Great handling for tight squeezes.',
         color: 0x2ecc71,
         baseStats: {
-            topSpeed: 75,
-            acceleration: 80,
+            topSpeed: 65,      // Slightly faster, better handling
+            acceleration: 60,
             handling: 100,
             durability: 75,
             earnings: 1.1
@@ -84,8 +84,8 @@ const VEHICLES = {
         description: 'Fast and flashy. Higher risk, higher reward.',
         color: 0xe74c3c,
         baseStats: {
-            topSpeed: 100,
-            acceleration: 95,
+            topSpeed: 100,     // First real speed upgrade
+            acceleration: 90,
             handling: 80,
             durability: 65,
             earnings: 1.3
@@ -99,9 +99,9 @@ const VEHICLES = {
         description: 'Raw American power. Fast but harder to handle.',
         color: 0xff6600,
         baseStats: {
-            topSpeed: 120,
-            acceleration: 110,
-            handling: 70,
+            topSpeed: 140,     // Big speed jump
+            acceleration: 120,
+            handling: 65,
             durability: 80,
             earnings: 1.5
         },
@@ -114,9 +114,9 @@ const VEHICLES = {
         description: 'European precision. Blazing speed with great control.',
         color: 0xffcc00,
         baseStats: {
-            topSpeed: 140,
-            acceleration: 130,
-            handling: 90,
+            topSpeed: 180,     // Very fast
+            acceleration: 160,
+            handling: 85,
             durability: 50,
             earnings: 2.0
         },
@@ -129,9 +129,9 @@ const VEHICLES = {
         description: 'Ultimate speed machine. For true masters only.',
         color: 0x9900ff,
         baseStats: {
-            topSpeed: 170,
-            acceleration: 150,
-            handling: 95,
+            topSpeed: 250,     // INSANE speed - 4x faster than compact
+            acceleration: 200,
+            handling: 90,
             durability: 40,
             earnings: 3.0
         },
