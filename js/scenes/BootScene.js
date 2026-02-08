@@ -238,9 +238,16 @@ class BootScene extends Phaser.Scene {
         try {
             const saved = localStorage.getItem('trafficCutUp_save');
             if (saved) {
-                window.gameState.saveData = JSON.parse(saved);
+                const loadedData = JSON.parse(saved);
                 // Merge with defaults for any missing fields
-                window.gameState.saveData = { ...DEFAULT_SAVE, ...window.gameState.saveData };
+                window.gameState.saveData = { ...DEFAULT_SAVE, ...loadedData };
+
+                // Ensure all vehicles exist in save (handles new vehicles added in updates)
+                Object.keys(DEFAULT_SAVE.vehicles).forEach(vehicleId => {
+                    if (!window.gameState.saveData.vehicles[vehicleId]) {
+                        window.gameState.saveData.vehicles[vehicleId] = { ...DEFAULT_SAVE.vehicles[vehicleId] };
+                    }
+                });
             } else {
                 window.gameState.saveData = { ...DEFAULT_SAVE };
             }

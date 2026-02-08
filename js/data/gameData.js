@@ -7,35 +7,35 @@ const GAME_CONFIG = {
     // Game dimensions
     GAME_WIDTH: 450,
     GAME_HEIGHT: 800,
-    
+
     // Lane configuration
     LANES: 5,
     LANE_WIDTH: 70,
     ROAD_MARGIN: 40,
-    
+
     // Speed settings (pixels per second)
     BASE_SCROLL_SPEED: 300,
     MAX_SCROLL_SPEED: 800,
-    
+
     // Gameplay
     CLOSE_PASS_DISTANCE: 60,
     COMBO_TIMEOUT: 2000, // ms before combo resets
     BOOST_DURATION: 2000,
     BOOST_COOLDOWN: 5000,
     BOOST_MULTIPLIER: 1.5,
-    
+
     // Scoring
     CLOSE_PASS_REWARD: 50,
     SPEED_BONUS_THRESHOLD: 500, // scroll speed to start earning speed bonus
     SPEED_BONUS_RATE: 0.1, // $ per pixel/s above threshold per second
-    
+
     // Combo multipliers
     COMBO_LEVELS: [1, 1.5, 2, 3, 5],
-    
+
     // Traffic
     TRAFFIC_SPAWN_INTERVAL: 800, // ms
     TRAFFIC_SPEED_VARIANCE: 0.3, // ±30% of base speed
-    
+
     // Colors
     COLORS: {
         ROAD: 0x1a1a2e,
@@ -54,9 +54,9 @@ const VEHICLES = {
         description: 'Reliable and balanced. Perfect for beginners.',
         color: 0x3498db,
         baseStats: {
-            topSpeed: 100,
-            acceleration: 80,
-            handling: 90,
+            topSpeed: 80,
+            acceleration: 70,
+            handling: 85,
             durability: 100,
             earnings: 1.0
         },
@@ -69,10 +69,10 @@ const VEHICLES = {
         description: 'Nimble and quick. Great handling for tight squeezes.',
         color: 0x2ecc71,
         baseStats: {
-            topSpeed: 90,
-            acceleration: 90,
-            handling: 110,
-            durability: 80,
+            topSpeed: 75,
+            acceleration: 80,
+            handling: 100,
+            durability: 75,
             earnings: 1.1
         },
         unlockCost: 0,
@@ -84,13 +84,58 @@ const VEHICLES = {
         description: 'Fast and flashy. Higher risk, higher reward.',
         color: 0xe74c3c,
         baseStats: {
-            topSpeed: 130,
-            acceleration: 110,
-            handling: 85,
-            durability: 70,
+            topSpeed: 100,
+            acceleration: 95,
+            handling: 80,
+            durability: 65,
             earnings: 1.3
         },
         unlockCost: 5000,
+        unlocked: false
+    },
+    muscle_car: {
+        id: 'muscle_car',
+        name: 'Muscle Car',
+        description: 'Raw American power. Fast but harder to handle.',
+        color: 0xff6600,
+        baseStats: {
+            topSpeed: 120,
+            acceleration: 110,
+            handling: 70,
+            durability: 80,
+            earnings: 1.5
+        },
+        unlockCost: 15000,
+        unlocked: false
+    },
+    supercar: {
+        id: 'supercar',
+        name: 'Supercar',
+        description: 'European precision. Blazing speed with great control.',
+        color: 0xffcc00,
+        baseStats: {
+            topSpeed: 140,
+            acceleration: 130,
+            handling: 90,
+            durability: 50,
+            earnings: 2.0
+        },
+        unlockCost: 50000,
+        unlocked: false
+    },
+    hypercar: {
+        id: 'hypercar',
+        name: 'Hypercar',
+        description: 'Ultimate speed machine. For true masters only.',
+        color: 0x9900ff,
+        baseStats: {
+            topSpeed: 170,
+            acceleration: 150,
+            handling: 95,
+            durability: 40,
+            earnings: 3.0
+        },
+        unlockCost: 150000,
         unlocked: false
     }
 };
@@ -162,6 +207,9 @@ const DEFAULT_SAVE = {
     vehicles: {
         compact_sedan: { owned: true, upgrades: { engine: 0, transmission: 0, handling: 0, nitro: 0 } },
         economy_hatch: { owned: true, upgrades: { engine: 0, transmission: 0, handling: 0, nitro: 0 } },
-        sports_coupe: { owned: false, upgrades: { engine: 0, transmission: 0, handling: 0, nitro: 0 } }
+        sports_coupe: { owned: false, upgrades: { engine: 0, transmission: 0, handling: 0, nitro: 0 } },
+        muscle_car: { owned: false, upgrades: { engine: 0, transmission: 0, handling: 0, nitro: 0 } },
+        supercar: { owned: false, upgrades: { engine: 0, transmission: 0, handling: 0, nitro: 0 } },
+        hypercar: { owned: false, upgrades: { engine: 0, transmission: 0, handling: 0, nitro: 0 } }
     }
 };
