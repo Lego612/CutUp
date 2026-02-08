@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Traffic Cut-Up Tycoon - Weave through traffic, earn money, upgrade your ride!">
+    <title>Traffic Cut-Up Tycoon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container"></div>
+    
+    <!-- Phaser 3 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+    
+    <!-- Game Data -->
+    <script src="js/data/gameData.js"></script>
+    
+    <!-- Systems -->
+    <script src="js/systems/ScoreManager.js"></script>
+    <script src="js/systems/UpgradeManager.js"></script>
+    <script src="js/systems/TrafficSpawner.js"></script>
+    
+    <!-- Game Objects -->
+    <script src="js/objects/PlayerCar.js"></script>
+    <script src="js/objects/TrafficCar.js"></script>
+    
+    <!-- Scenes -->
+    <script src="js/scenes/BootScene.js"></script>
+    <script src="js/scenes/MenuScene.js"></script>
+    <script src="js/scenes/GameScene.js"></script>
+    <script src="js/scenes/GarageScene.js"></script>
+    <script src="js/scenes/GameOverScene.js"></script>
+    
+    <!-- Main Game Config -->
+    <script src="js/main.js"></script>
+</body>
+</html>
