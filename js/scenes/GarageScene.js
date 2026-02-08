@@ -430,7 +430,7 @@ class GarageScene extends Phaser.Scene {
                 row.btnText.setText('MAX');
                 row.btnText.setColor('#ffcc00');
             } else {
-                const cost = this.upgradeManager.getUpgradeCost(type, level + 1);
+                const cost = this.upgradeManager.getUpgradeCost(type, level);
                 row.btnText.setText(`$${cost}`);
                 row.btnText.setColor(saveData.money >= cost ? '#00ff88' : '#ff5555');
             }

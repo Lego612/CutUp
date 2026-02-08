@@ -64,8 +64,13 @@ class ScoreManager {
      */
     addSpeedBonus(currentSpeed, deltaSeconds) {
         if (currentSpeed > GAME_CONFIG.SPEED_BONUS_THRESHOLD) {
+            // Get vehicle earnings bonus
+            const saveData = window.gameState.saveData;
+            const vehicle = VEHICLES[saveData.selectedVehicle];
+            const earningsBonus = vehicle.baseStats.earnings;
+
             const bonus = (currentSpeed - GAME_CONFIG.SPEED_BONUS_THRESHOLD) *
-                GAME_CONFIG.SPEED_BONUS_RATE * deltaSeconds;
+                GAME_CONFIG.SPEED_BONUS_RATE * deltaSeconds * earningsBonus;
             this.speedBonusAccumulator += bonus;
 
             // Add to run money in chunks
