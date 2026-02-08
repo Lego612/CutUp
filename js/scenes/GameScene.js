@@ -226,31 +226,88 @@ class GameScene extends Phaser.Scene {
     setupTouchControls() {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
+        const scene = this;
 
-        // Create invisible interactive zones that cover the left and right halves
-        // Using setInteractive like the menu buttons which are confirmed working
+        // Visual feedback indicator (temporary for debugging)
+        this.touchFeedback = this.add.text(width / 2, 100, '', {
+            fontSize: '24px',
+            fontFamily: 'Arial',
+            color: '#00ff00'
+        }).setOrigin(0.5).setDepth(2000);
 
-        // Left half zone
-        this.leftTouchZone = this.add.rectangle(width / 4, height / 2, width / 2, height, 0x000000, 0);
-        this.leftTouchZone.setInteractive();
+        // Create invisible interactive zones
+        this.leftTouchZone = this.add.rectangle(width / 4, height / 2, width / 2, height, 0xff0000, 0);
+        this.leftTouchZone.setInteractive({ useHandCursor: true });
         this.leftTouchZone.setDepth(1000);
         this.leftTouchZone.on('pointerdown', () => {
-            if (this.isGameOver) return;
-            if (this.laneChangeCooldown > 0) return;
-            this.player.changeLane(-1);
-            this.laneChangeCooldown = 100;
+            this.handleTouchInput('left-phaser');
         });
 
-        // Right half zone
-        this.rightTouchZone = this.add.rectangle(width * 3 / 4, height / 2, width / 2, height, 0x000000, 0);
-        this.rightTouchZone.setInteractive();
+        this.rightTouchZone = this.add.rectangle(width * 3 / 4, height / 2, width / 2, height, 0x0000ff, 0);
+        this.rightTouchZone.setInteractive({ useHandCursor: true });
         this.rightTouchZone.setDepth(1000);
         this.rightTouchZone.on('pointerdown', () => {
-            if (this.isGameOver) return;
-            if (this.laneChangeCooldown > 0) return;
-            this.player.changeLane(1);
-            this.laneChangeCooldown = 100;
+            this.handleTouchInput('right-phaser');
         });
+
+        // Also add global Phaser input as backup
+        this.input.on('pointerdown', (pointer) => {
+            if (pointer.x < width / 2) {
+                this.handleTouchInput('left-global');
+            } else {
+                this.handleTouchInput('right-global');
+            }
+        });
+
+        // DOM-level touch handler (most reliable for mobile)
+        const canvas = this.game.canvas;
+
+        const handleDOMTouch = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            let clientX;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+                clientX = e.changedTouches[0].clientX;
+            } else {
+                clientX = e.clientX;
+            }
+
+            const rect = canvas.getBoundingClientRect();
+            const canvasMidpoint = rect.left + rect.width / 2;
+
+            if (clientX < canvasMidpoint) {
+                scene.handleTouchInput('left-dom');
+            } else {
+                scene.handleTouchInput('right-dom');
+            }
+        };
+
+        canvas.addEventListener('touchstart', handleDOMTouch, { passive: false });
+        canvas.addEventListener('click', handleDOMTouch, { passive: false });
+    }
+
+    handleTouchInput(direction) {
+        // Show visual feedback
+        const dir = direction.startsWith('left') ? 'LEFT' : 'RIGHT';
+        this.touchFeedback.setText(dir + ' (' + direction.split('-')[1] + ')');
+
+        // Clear feedback after a moment
+        this.time.delayedCall(500, () => {
+            if (this.touchFeedback) this.touchFeedback.setText('');
+        });
+
+        if (this.isGameOver) return;
+        if (this.laneChangeCooldown > 0) return;
+
+        if (direction.startsWith('left')) {
+            this.player.changeLane(-1);
+        } else {
+            this.player.changeLane(1);
+        }
+        this.laneChangeCooldown = 100;
     }
 
     update(time, delta) {
