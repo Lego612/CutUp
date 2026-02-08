@@ -225,28 +225,19 @@ class GameScene extends Phaser.Scene {
 
     setupTouchControls() {
         const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
 
-        // Left touch zone (left half of screen)
-        const leftZone = this.add.rectangle(width / 4, height / 2, width / 2, height, 0x000000, 0);
-        leftZone.setInteractive();
-        leftZone.setDepth(50);
-        leftZone.on('pointerdown', () => {
-            if (this.laneChangeCooldown <= 0) {
+        // Simple tap detection - check which side of screen was tapped
+        this.input.on('pointerdown', (pointer) => {
+            if (this.isGameOver) return;
+            if (this.laneChangeCooldown > 0) return;
+
+            // Tap on left half = move left, tap on right half = move right
+            if (pointer.x < width / 2) {
                 this.player.changeLane(-1);
-                this.laneChangeCooldown = 100;
-            }
-        });
-
-        // Right touch zone (right half of screen)
-        const rightZone = this.add.rectangle(width * 3 / 4, height / 2, width / 2, height, 0x000000, 0);
-        rightZone.setInteractive();
-        rightZone.setDepth(50);
-        rightZone.on('pointerdown', () => {
-            if (this.laneChangeCooldown <= 0) {
+            } else {
                 this.player.changeLane(1);
-                this.laneChangeCooldown = 100;
             }
+            this.laneChangeCooldown = 100;
         });
     }
 
