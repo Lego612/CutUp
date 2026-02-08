@@ -225,20 +225,48 @@ class GameScene extends Phaser.Scene {
 
     setupTouchControls() {
         const width = this.cameras.main.width;
+        const scene = this;
 
-        // Simple tap detection - check which side of screen was tapped
+        // Phaser input - works on desktop and some mobile
         this.input.on('pointerdown', (pointer) => {
-            if (this.isGameOver) return;
-            if (this.laneChangeCooldown > 0) return;
-
-            // Tap on left half = move left, tap on right half = move right
-            if (pointer.x < width / 2) {
-                this.player.changeLane(-1);
-            } else {
-                this.player.changeLane(1);
-            }
-            this.laneChangeCooldown = 100;
+            scene.handleTouch(pointer.x);
         });
+
+        // Also add DOM event listeners as fallback for mobile
+        const canvas = this.game.canvas;
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const x = (touch.clientX - rect.left) * scaleX;
+                scene.handleTouch(x);
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const x = (e.clientX - rect.left) * scaleX;
+            scene.handleTouch(x);
+        });
+    }
+
+    handleTouch(x) {
+        if (this.isGameOver) return;
+        if (this.laneChangeCooldown > 0) return;
+
+        const width = this.cameras.main.width;
+
+        // Tap on left half = move left, tap on right half = move right
+        if (x < width / 2) {
+            this.player.changeLane(-1);
+        } else {
+            this.player.changeLane(1);
+        }
+        this.laneChangeCooldown = 100;
     }
 
     update(time, delta) {

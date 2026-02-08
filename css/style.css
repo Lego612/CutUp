@@ -38,12 +38,20 @@ body {
     overflow: hidden;
     background: var(--bg-dark);
     font-family: var(--font-body);
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
     background:
         radial-gradient(ellipse at 50% 0%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
         radial-gradient(ellipse at 0% 100%, rgba(255, 0, 229, 0.1) 0%, transparent 50%),
