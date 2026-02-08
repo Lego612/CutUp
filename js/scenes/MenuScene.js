@@ -1,5 +1,5 @@
 /**
- * MenuScene - Enhanced main menu with premium UI
+ * MenuScene - Pixel Art Retro Arcade Style
  */
 class MenuScene extends Phaser.Scene {
     constructor() {
@@ -7,294 +7,312 @@ class MenuScene extends Phaser.Scene {
     }
 
     create() {
-        this.cameras.main.fadeIn(400, 0, 0, 0);
+        this.cameras.main.fadeIn(300, 0, 0, 0);
 
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        // Premium background
-        this.createBackground(width, height);
+        // Pixel art background
+        this.createPixelBackground(width, height);
 
-        // Title with glow animation
-        this.createTitle(width, height);
+        // Animated road
+        this.createScrollingRoad(width, height);
 
-        // Menu buttons with hover effects
-        this.createMenuButtons(width, height);
+        // Pixel title
+        this.createPixelTitle(width, height);
 
-        // Stats display panel
-        this.createStatsDisplay(width, height);
+        // Pixel menu buttons
+        this.createPixelButtons(width, height);
+
+        // Stats panel
+        this.createStatsPanel(width, height);
 
         // Keyboard shortcuts
         this.input.keyboard.on('keydown-SPACE', () => this.startGame());
         this.input.keyboard.on('keydown-G', () => this.openGarage());
     }
 
-    createBackground(width, height) {
-        // Overlay gradient
-        const overlay = this.add.graphics();
-        overlay.fillGradientStyle(0x0a0a12, 0x0a0a12, 0x1a0a2e, 0x1a0a2e, 0.9, 0.9, 0.7, 0.7);
-        overlay.fillRect(0, 0, width, height);
+    createPixelBackground(width, height) {
+        // Dark gradient background
+        const bg = this.add.graphics();
+        bg.fillStyle(0x0a0a12, 1);
+        bg.fillRect(0, 0, width, height);
 
-        // Animated particles
-        this.createParticles(width, height);
+        // Pixel grid overlay (subtle)
+        const grid = this.add.graphics();
+        grid.lineStyle(1, 0x1a1a2e, 0.3);
 
-        // Animated road center line
-        this.roadLines = [];
-        for (let i = 0; i < 10; i++) {
-            const line = this.add.rectangle(
-                width / 2,
-                i * 100 - 50,
-                6,
-                50,
-                0xffcc00,
-                0.6
-            );
-            this.roadLines.push(line);
+        // Horizontal lines
+        for (let y = 0; y < height; y += 16) {
+            grid.lineBetween(0, y, width, y);
         }
 
-        this.tweens.add({
-            targets: this.roadLines,
-            y: '+=100',
-            duration: 400,
-            repeat: -1,
-            onRepeat: () => {
-                this.roadLines.forEach(line => {
-                    if (line.y > height + 50) {
-                        line.y -= height + 100;
-                    }
-                });
-            }
-        });
+        // Vertical lines
+        for (let x = 0; x < width; x += 16) {
+            grid.lineBetween(x, 0, x, height);
+        }
 
-        // Side glow strips
-        const leftGlow = this.add.graphics();
-        leftGlow.fillStyle(0xff00e5, 0.3);
-        leftGlow.fillRect(0, 0, 4, height);
+        // Scanline effect (CRT style)
+        const scanlines = this.add.graphics();
+        scanlines.lineStyle(1, 0x000000, 0.1);
+        for (let y = 0; y < height; y += 4) {
+            scanlines.lineBetween(0, y, width, y);
+        }
+        scanlines.setDepth(100);
 
-        const rightGlow = this.add.graphics();
-        rightGlow.fillStyle(0x00f5ff, 0.3);
-        rightGlow.fillRect(width - 4, 0, 4, height);
+        // Side neon strips (pixel style)
+        this.createPixelStrip(0, 0, 8, height, 0xff00ff);
+        this.createPixelStrip(width - 8, 0, 8, height, 0x00ffff);
+    }
+
+    createPixelStrip(x, y, w, h, color) {
+        const strip = this.add.graphics();
+        strip.fillStyle(color, 0.6);
+
+        // Create pixel blocks instead of smooth rectangle
+        for (let py = 0; py < h; py += 8) {
+            const alpha = 0.4 + Math.sin(py * 0.05) * 0.3;
+            strip.fillStyle(color, alpha);
+            strip.fillRect(x, py, w, 6);
+        }
 
         // Pulse animation
         this.tweens.add({
-            targets: [leftGlow, rightGlow],
-            alpha: { from: 0.3, to: 0.7 },
-            duration: 1500,
+            targets: strip,
+            alpha: { from: 0.6, to: 1 },
+            duration: 800,
             yoyo: true,
             repeat: -1
         });
     }
 
-    createParticles(width, height) {
-        // Floating particles for depth
-        for (let i = 0; i < 20; i++) {
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            const size = 1 + Math.random() * 2;
-            const particle = this.add.circle(x, y, size, 0x00f5ff, 0.3);
+    createScrollingRoad(width, height) {
+        // Road background
+        const roadWidth = 200;
+        const roadX = (width - roadWidth) / 2;
 
-            this.tweens.add({
-                targets: particle,
-                y: y - 100 - Math.random() * 100,
-                alpha: 0,
-                duration: 3000 + Math.random() * 2000,
-                repeat: -1,
-                onRepeat: () => {
-                    particle.x = Math.random() * width;
-                    particle.y = height + 20;
-                    particle.alpha = 0.3;
-                }
-            });
+        const road = this.add.graphics();
+        road.fillStyle(0x2a2a3a, 1);
+        road.fillRect(roadX, 0, roadWidth, height);
+
+        // Road edges (pixel style)
+        road.fillStyle(0xffcc00, 0.8);
+        road.fillRect(roadX, 0, 4, height);
+        road.fillRect(roadX + roadWidth - 4, 0, 4, height);
+
+        // Animated lane markers
+        this.laneMarkers = [];
+        for (let i = 0; i < 12; i++) {
+            const marker = this.add.rectangle(
+                width / 2,
+                i * 80 - 40,
+                8,
+                32,
+                0xffcc00,
+                0.9
+            );
+            this.laneMarkers.push(marker);
         }
+
+        // Scroll animation
+        this.tweens.add({
+            targets: this.laneMarkers,
+            y: '+=80',
+            duration: 300,
+            repeat: -1,
+            onRepeat: () => {
+                this.laneMarkers.forEach(marker => {
+                    if (marker.y > height + 40) {
+                        marker.y -= height + 120;
+                    }
+                });
+            }
+        });
     }
 
-    createTitle(width, height) {
-        // Main title with shadow
-        const titleShadow = this.add.text(width / 2 + 3, 103, 'TRAFFIC', {
-            fontFamily: 'Orbitron',
-            fontSize: '52px',
+    createPixelTitle(width, height) {
+        // Shadow layer
+        const shadowText = this.add.text(width / 2 + 4, 84, 'TRAFFIC', {
+            fontFamily: 'monospace',
+            fontSize: '48px',
             fontStyle: 'bold',
             color: '#000000'
-        }).setOrigin(0.5).setAlpha(0.3);
-
-        const title = this.add.text(width / 2, 100, 'TRAFFIC', {
-            fontFamily: 'Orbitron',
-            fontSize: '52px',
-            fontStyle: 'bold',
-            color: '#00f5ff'
         }).setOrigin(0.5);
 
-        const subtitleShadow = this.add.text(width / 2 + 2, 157, 'CUT-UP TYCOON', {
-            fontFamily: 'Orbitron',
-            fontSize: '28px',
+        // Main title - TRAFFIC
+        const titleText = this.add.text(width / 2, 80, 'TRAFFIC', {
+            fontFamily: 'monospace',
+            fontSize: '48px',
+            fontStyle: 'bold',
+            color: '#00ffff'
+        }).setOrigin(0.5);
+
+        // Subtitle shadow
+        const subShadow = this.add.text(width / 2 + 3, 133, 'CUT-UP TYCOON', {
+            fontFamily: 'monospace',
+            fontSize: '24px',
             fontStyle: 'bold',
             color: '#000000'
-        }).setOrigin(0.5).setAlpha(0.3);
-
-        const subtitle = this.add.text(width / 2, 155, 'CUT-UP TYCOON', {
-            fontFamily: 'Orbitron',
-            fontSize: '28px',
-            fontStyle: 'bold',
-            color: '#ff00e5'
         }).setOrigin(0.5);
 
-        // Glow pulse animation
+        // Subtitle - CUT-UP TYCOON
+        const subText = this.add.text(width / 2, 130, 'CUT-UP TYCOON', {
+            fontFamily: 'monospace',
+            fontSize: '24px',
+            fontStyle: 'bold',
+            color: '#ff00ff'
+        }).setOrigin(0.5);
+
+        // Flashing effect
         this.tweens.add({
-            targets: [title, subtitle],
-            alpha: { from: 0.85, to: 1 },
-            duration: 1200,
+            targets: [titleText, subText],
+            alpha: { from: 1, to: 0.7 },
+            duration: 500,
             yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
+            repeat: -1
         });
 
         // Tagline
-        this.add.text(width / 2, 200, 'Weave through traffic. Stack your cash.', {
-            fontFamily: 'Rajdhani',
-            fontSize: '16px',
-            color: '#7a7a8a'
+        this.add.text(width / 2, 170, 'WEAVE • EARN • UPGRADE', {
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: '#666688'
         }).setOrigin(0.5);
     }
 
-    createMenuButtons(width, height) {
-        const buttonY = height / 2 + 40;
+    createPixelButtons(width, height) {
+        const startY = height / 2 + 30;
 
-        // Start Run button (primary action)
-        this.createPremiumButton(width / 2, buttonY, 'START RUN', 0x00f5ff, 0x006677, () => this.startGame(), true);
+        // START button
+        this.createPixelButton(width / 2, startY, 'START', 0x00ff00, () => this.startGame(), true);
 
-        // Garage button
-        this.createPremiumButton(width / 2, buttonY + 85, 'GARAGE', 0xff00e5, 0x660066, () => this.openGarage(), false);
+        // GARAGE button
+        this.createPixelButton(width / 2, startY + 70, 'GARAGE', 0xff00ff, () => this.openGarage(), false);
+
+        // SETTINGS button (smaller)
+        this.createPixelButton(width / 2, startY + 130, 'SETTINGS', 0x666688, () => { }, false);
     }
 
-    createPremiumButton(x, y, text, color, darkColor, callback, isPrimary) {
-        const button = this.add.container(x, y);
+    createPixelButton(x, y, text, color, callback, isPrimary) {
+        const btnWidth = isPrimary ? 200 : 160;
+        const btnHeight = isPrimary ? 48 : 40;
 
-        // Button dimensions
-        const btnWidth = isPrimary ? 260 : 220;
-        const btnHeight = isPrimary ? 60 : 50;
+        const container = this.add.container(x, y);
 
-        // Outer glow
-        const glow = this.add.graphics();
-        glow.fillStyle(color, 0.2);
-        glow.fillRoundedRect(-btnWidth / 2 - 4, -btnHeight / 2 - 4, btnWidth + 8, btnHeight + 8, 16);
-        button.add(glow);
+        // Button border (pixel style - double border)
+        const border = this.add.graphics();
+        border.lineStyle(4, color, 1);
+        border.strokeRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight);
+        border.lineStyle(2, 0xffffff, 0.3);
+        border.strokeRect(-btnWidth / 2 + 4, -btnHeight / 2 + 4, btnWidth - 8, btnHeight - 8);
+        container.add(border);
 
         // Button background
         const bg = this.add.graphics();
-        bg.fillStyle(0x1a1a2e, 0.95);
-        bg.fillRoundedRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight, 12);
-        bg.lineStyle(3, color, 1);
-        bg.strokeRoundedRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight, 12);
-        button.add(bg);
-
-        // Inner accent line
-        const accent = this.add.graphics();
-        accent.fillStyle(color, 0.3);
-        accent.fillRoundedRect(-btnWidth / 2 + 4, -btnHeight / 2 + 4, btnWidth - 8, 4, 2);
-        button.add(accent);
-
-        // Play icon for primary button
-        if (isPrimary) {
-            const icon = this.add.text(-btnWidth / 2 + 30, 0, '▶', {
-                fontFamily: 'Arial',
-                fontSize: '20px',
-                color: Phaser.Display.Color.IntegerToColor(color).rgba
-            }).setOrigin(0.5);
-            button.add(icon);
-        }
+        bg.fillStyle(0x1a1a2e, 0.9);
+        bg.fillRect(-btnWidth / 2 + 4, -btnHeight / 2 + 4, btnWidth - 8, btnHeight - 8);
+        container.add(bg);
 
         // Button text
-        const btnText = this.add.text(isPrimary ? 15 : 0, 0, text, {
-            fontFamily: 'Orbitron',
-            fontSize: isPrimary ? '24px' : '20px',
+        const btnText = this.add.text(0, 0, text, {
+            fontFamily: 'monospace',
+            fontSize: isPrimary ? '24px' : '18px',
             fontStyle: 'bold',
-            color: '#ffffff'
+            color: Phaser.Display.Color.IntegerToColor(color).rgba
         }).setOrigin(0.5);
-        button.add(btnText);
+        container.add(btnText);
+
+        // Selection indicator (arrow)
+        const arrow = this.add.text(-btnWidth / 2 - 20, 0, '>', {
+            fontFamily: 'monospace',
+            fontSize: '24px',
+            fontStyle: 'bold',
+            color: Phaser.Display.Color.IntegerToColor(color).rgba
+        }).setOrigin(0.5).setAlpha(0);
+        container.add(arrow);
 
         // Hit area
         const hitArea = this.add.rectangle(0, 0, btnWidth, btnHeight, 0x000000, 0);
-        button.add(hitArea);
+        container.add(hitArea);
         hitArea.setInteractive({ useHandCursor: true });
 
         // Hover effects
         hitArea.on('pointerover', () => {
+            bg.clear();
+            bg.fillStyle(color, 0.2);
+            bg.fillRect(-btnWidth / 2 + 4, -btnHeight / 2 + 4, btnWidth - 8, btnHeight - 8);
+            arrow.setAlpha(1);
+
+            // Arrow bounce animation
             this.tweens.add({
-                targets: button,
-                scaleX: 1.05,
-                scaleY: 1.05,
-                duration: 100
+                targets: arrow,
+                x: -btnWidth / 2 - 15,
+                duration: 200,
+                yoyo: true,
+                repeat: -1
             });
-            glow.clear();
-            glow.fillStyle(color, 0.4);
-            glow.fillRoundedRect(-btnWidth / 2 - 6, -btnHeight / 2 - 6, btnWidth + 12, btnHeight + 12, 18);
         });
 
         hitArea.on('pointerout', () => {
-            this.tweens.add({
-                targets: button,
-                scaleX: 1,
-                scaleY: 1,
-                duration: 100
-            });
-            glow.clear();
-            glow.fillStyle(color, 0.2);
-            glow.fillRoundedRect(-btnWidth / 2 - 4, -btnHeight / 2 - 4, btnWidth + 8, btnHeight + 8, 16);
+            bg.clear();
+            bg.fillStyle(0x1a1a2e, 0.9);
+            bg.fillRect(-btnWidth / 2 + 4, -btnHeight / 2 + 4, btnWidth - 8, btnHeight - 8);
+            arrow.setAlpha(0);
+            this.tweens.killTweensOf(arrow);
+            arrow.x = -btnWidth / 2 - 20;
         });
 
         hitArea.on('pointerdown', () => {
-            this.tweens.add({
-                targets: button,
-                scaleX: 0.95,
-                scaleY: 0.95,
-                duration: 50,
-                yoyo: true,
-                onComplete: callback
-            });
+            // Flash effect
+            bg.clear();
+            bg.fillStyle(color, 0.5);
+            bg.fillRect(-btnWidth / 2 + 4, -btnHeight / 2 + 4, btnWidth - 8, btnHeight - 8);
+
+            this.time.delayedCall(100, callback);
         });
 
-        return button;
+        return container;
     }
 
-    createStatsDisplay(width, height) {
+    createStatsPanel(width, height) {
         const saveData = window.gameState.saveData;
+        const panelY = height - 140;
 
-        // Stats panel
-        const panelY = height - 160;
+        // Panel background (pixel border)
         const panel = this.add.graphics();
-        panel.fillStyle(0x1a1a2e, 0.85);
-        panel.fillRoundedRect(width / 2 - 140, panelY, 280, 100, 12);
-        panel.lineStyle(1, 0x3d3d5c, 0.8);
-        panel.strokeRoundedRect(width / 2 - 140, panelY, 280, 100, 12);
+        panel.lineStyle(2, 0x00ffff, 0.6);
+        panel.strokeRect(width / 2 - 120, panelY, 240, 90);
+        panel.fillStyle(0x0a0a12, 0.8);
+        panel.fillRect(width / 2 - 118, panelY + 2, 236, 86);
 
-        // Money display with icon
-        this.add.text(width / 2, panelY + 25, `💰  $${saveData.money.toLocaleString()}`, {
-            fontFamily: 'Orbitron',
-            fontSize: '26px',
+        // Money display
+        this.add.text(width / 2, panelY + 22, `$ ${saveData.money.toLocaleString()}`, {
+            fontFamily: 'monospace',
+            fontSize: '22px',
             fontStyle: 'bold',
-            color: '#00ff88'
+            color: '#00ff00'
         }).setOrigin(0.5);
 
         // High score
-        this.add.text(width / 2, panelY + 55, `🏆 Best Run: $${saveData.highScore.toLocaleString()}`, {
-            fontFamily: 'Rajdhani',
-            fontSize: '16px',
+        this.add.text(width / 2, panelY + 48, `BEST: $${saveData.highScore.toLocaleString()}`, {
+            fontFamily: 'monospace',
+            fontSize: '14px',
             color: '#ffcc00'
         }).setOrigin(0.5);
 
-        // Current vehicle with icon
+        // Current vehicle
         const vehicle = VEHICLES[saveData.selectedVehicle];
-        this.add.text(width / 2, panelY + 80, `🚗 ${vehicle.name}`, {
-            fontFamily: 'Rajdhani',
-            fontSize: '14px',
-            color: '#a0a0b0'
+        this.add.text(width / 2, panelY + 70, `[${vehicle.name.toUpperCase()}]`, {
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: '#888888'
         }).setOrigin(0.5);
 
-        // Controls hint
-        this.add.text(width / 2, height - 30, 'SPACE to play  •  G for garage', {
-            fontFamily: 'Rajdhani',
-            fontSize: '12px',
-            color: '#4a4a5a'
+        // Controls hint at bottom
+        this.add.text(width / 2, height - 20, 'SPACE=PLAY  G=GARAGE', {
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            color: '#444466'
         }).setOrigin(0.5);
     }
 
@@ -306,15 +324,17 @@ class MenuScene extends Phaser.Scene {
             maxCombo: 0
         };
 
-        this.cameras.main.fadeOut(400, 0, 0, 0);
-        this.time.delayedCall(400, () => {
+        // Screen flash effect
+        this.cameras.main.flash(100, 0, 255, 255);
+        this.cameras.main.fadeOut(300, 0, 0, 0);
+        this.time.delayedCall(300, () => {
             this.scene.start('GameScene');
         });
     }
 
     openGarage() {
-        this.cameras.main.fadeOut(300, 0, 0, 0);
-        this.time.delayedCall(300, () => {
+        this.cameras.main.fadeOut(200, 0, 0, 0);
+        this.time.delayedCall(200, () => {
             this.scene.start('GarageScene');
         });
     }

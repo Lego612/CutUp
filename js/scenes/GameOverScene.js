@@ -1,5 +1,5 @@
 /**
- * GameOverScene - Enhanced results screen with premium UI
+ * GameOverScene - Pixel Art Results Screen
  */
 class GameOverScene extends Phaser.Scene {
     constructor() {
@@ -7,7 +7,7 @@ class GameOverScene extends Phaser.Scene {
     }
 
     create() {
-        this.cameras.main.fadeIn(400, 0, 0, 0);
+        this.cameras.main.fadeIn(300, 0, 0, 0);
 
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
@@ -20,17 +20,17 @@ class GameOverScene extends Phaser.Scene {
             saveData.highScore = runData.money;
         }
 
-        // Create premium background
-        this.createBackground(width, height);
+        // Pixel background
+        this.createPixelBackground(width, height);
 
-        // Title with animation
-        this.createTitle(width, height, isNewHighScore);
+        // Title
+        this.createPixelTitle(width, height, isNewHighScore);
 
         // Stats panel
-        this.createStatsPanel(width, height, runData, saveData, isNewHighScore);
+        this.createPixelStats(width, height, runData, saveData, isNewHighScore);
 
-        // Action buttons
-        this.createButtons(width, height);
+        // Buttons
+        this.createPixelButtons(width, height);
 
         // Keyboard shortcuts
         this.input.keyboard.on('keydown-SPACE', () => this.playAgain());
@@ -38,234 +38,240 @@ class GameOverScene extends Phaser.Scene {
         this.input.keyboard.on('keydown-M', () => this.goToMenu());
     }
 
-    createBackground(width, height) {
-        // Dark overlay gradient
-        const overlay = this.add.graphics();
-        overlay.fillGradientStyle(0x0a0512, 0x0a0512, 0x1a0a2e, 0x1a0a2e, 0.95, 0.95, 0.85, 0.85);
-        overlay.fillRect(0, 0, width, height);
+    createPixelBackground(width, height) {
+        // Dark background
+        const bg = this.add.graphics();
+        bg.fillStyle(0x0a0a12, 1);
+        bg.fillRect(0, 0, width, height);
 
-        // Subtle particle effects
-        for (let i = 0; i < 15; i++) {
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            const particle = this.add.circle(x, y, 1 + Math.random() * 2, 0xff00e5, 0.2);
+        // Scanlines
+        const scanlines = this.add.graphics();
+        scanlines.lineStyle(1, 0x000000, 0.15);
+        for (let y = 0; y < height; y += 4) {
+            scanlines.lineBetween(0, y, width, y);
+        }
+        scanlines.setDepth(100);
 
-            this.tweens.add({
-                targets: particle,
-                y: y - 80,
-                alpha: 0,
-                duration: 2500 + Math.random() * 1500,
-                repeat: -1,
-                onRepeat: () => {
-                    particle.x = Math.random() * width;
-                    particle.y = height + 10;
-                    particle.alpha = 0.2;
-                }
-            });
+        // Pixel grid effect (subtle)
+        const grid = this.add.graphics();
+        grid.lineStyle(1, 0x1a1a2e, 0.2);
+        for (let y = 0; y < height; y += 32) {
+            grid.lineBetween(0, y, width, y);
+        }
+        for (let x = 0; x < width; x += 32) {
+            grid.lineBetween(x, 0, x, height);
         }
     }
 
-    createTitle(width, height, isNewHighScore) {
-        // "RUN COMPLETE" title with glow
-        const titleShadow = this.add.text(width / 2 + 3, 83, 'RUN COMPLETE', {
-            fontFamily: 'Orbitron',
-            fontSize: '36px',
+    createPixelTitle(width, height, isNewHighScore) {
+        // Shadow
+        this.add.text(width / 2 + 3, 68, 'RUN COMPLETE', {
+            fontFamily: 'monospace',
+            fontSize: '32px',
             fontStyle: 'bold',
             color: '#000000'
-        }).setOrigin(0.5).setAlpha(0.4);
-
-        const title = this.add.text(width / 2, 80, 'RUN COMPLETE', {
-            fontFamily: 'Orbitron',
-            fontSize: '36px',
-            fontStyle: 'bold',
-            color: '#ff00e5'
         }).setOrigin(0.5);
 
-        // Pulse animation
+        // Main title
+        const title = this.add.text(width / 2, 65, 'RUN COMPLETE', {
+            fontFamily: 'monospace',
+            fontSize: '32px',
+            fontStyle: 'bold',
+            color: '#ff00ff'
+        }).setOrigin(0.5);
+
+        // Flashing
         this.tweens.add({
             targets: title,
-            alpha: { from: 0.8, to: 1 },
-            duration: 1000,
+            alpha: { from: 1, to: 0.6 },
+            duration: 400,
             yoyo: true,
             repeat: -1
         });
 
         // High score celebration
         if (isNewHighScore) {
-            const highScoreText = this.add.text(width / 2, 125, '🏆 NEW HIGH SCORE! 🏆', {
-                fontFamily: 'Orbitron',
-                fontSize: '18px',
+            const hsText = this.add.text(width / 2, 105, '*** NEW HIGH SCORE ***', {
+                fontFamily: 'monospace',
+                fontSize: '16px',
                 fontStyle: 'bold',
                 color: '#ffcc00'
             }).setOrigin(0.5);
 
             this.tweens.add({
-                targets: highScoreText,
-                scaleX: { from: 1, to: 1.1 },
-                scaleY: { from: 1, to: 1.1 },
-                duration: 500,
+                targets: hsText,
+                alpha: { from: 1, to: 0.3 },
+                duration: 300,
                 yoyo: true,
                 repeat: -1
             });
 
-            // Celebration particles
-            this.createCelebrationParticles(width, height);
+            // Pixel confetti
+            this.createPixelConfetti(width, height);
         }
     }
 
-    createCelebrationParticles(width, height) {
-        const colors = [0xffcc00, 0xff00e5, 0x00f5ff, 0x00ff88];
+    createPixelConfetti(width, height) {
+        const colors = [0xffcc00, 0xff00ff, 0x00ffff, 0x00ff00];
 
-        for (let i = 0; i < 30; i++) {
-            this.time.delayedCall(i * 50, () => {
+        for (let i = 0; i < 20; i++) {
+            this.time.delayedCall(i * 30, () => {
                 const x = width / 2 + (Math.random() - 0.5) * 200;
-                const y = 130;
+                const y = 100;
                 const color = colors[Math.floor(Math.random() * colors.length)];
-                const size = 3 + Math.random() * 4;
 
-                const particle = this.add.circle(x, y, size, color, 0.8);
+                // Pixel squares instead of circles
+                const particle = this.add.rectangle(x, y, 4, 4, color, 0.9);
 
                 this.tweens.add({
                     targets: particle,
                     x: x + (Math.random() - 0.5) * 150,
-                    y: y + Math.random() * 150,
+                    y: y + 100 + Math.random() * 80,
                     alpha: 0,
-                    scale: 0,
-                    duration: 1000 + Math.random() * 500,
-                    ease: 'Cubic.easeOut',
+                    duration: 800,
                     onComplete: () => particle.destroy()
                 });
             });
         }
     }
 
-    createStatsPanel(width, height, runData, saveData, isNewHighScore) {
-        const panelX = width / 2;
-        const panelY = isNewHighScore ? 280 : 240;
-        const panelWidth = 300;
-        const panelHeight = 180;
+    createPixelStats(width, height, runData, saveData, isNewHighScore) {
+        const panelY = isNewHighScore ? 160 : 140;
+        const panelWidth = 280;
+        const panelHeight = 200;
 
-        // Panel background with glassmorphism effect
+        // Panel border (pixel style)
         const panel = this.add.graphics();
-        panel.fillStyle(0x1a1a2e, 0.9);
-        panel.fillRoundedRect(panelX - panelWidth / 2, panelY - 20, panelWidth, panelHeight, 16);
-        panel.lineStyle(2, 0xff00e5, 0.6);
-        panel.strokeRoundedRect(panelX - panelWidth / 2, panelY - 20, panelWidth, panelHeight, 16);
+        panel.lineStyle(3, 0x00ffff, 0.8);
+        panel.strokeRect(width / 2 - panelWidth / 2, panelY, panelWidth, panelHeight);
+        panel.fillStyle(0x0a0a12, 0.9);
+        panel.fillRect(width / 2 - panelWidth / 2 + 3, panelY + 3, panelWidth - 6, panelHeight - 6);
 
-        // Inner glow line
-        const innerGlow = this.add.graphics();
-        innerGlow.fillStyle(0xff00e5, 0.2);
-        innerGlow.fillRoundedRect(panelX - panelWidth / 2 + 4, panelY - 16, panelWidth - 8, 4, 2);
+        // Inner border
+        panel.lineStyle(1, 0x00ffff, 0.3);
+        panel.strokeRect(width / 2 - panelWidth / 2 + 6, panelY + 6, panelWidth - 12, panelHeight - 12);
 
-        // Stats rows
-        const statsY = panelY + 10;
-        const rowHeight = 35;
+        // Stats
+        const statsX = width / 2;
+        let statY = panelY + 35;
+        const rowH = 38;
 
         // Money earned
-        this.createStatRow(panelX, statsY, '💰 Money Earned', `$${runData.money.toLocaleString()}`, '#00ff88');
+        this.createPixelStatRow(statsX, statY, 'MONEY', `$${runData.money.toLocaleString()}`, '#00ff00');
+        statY += rowH;
 
         // Close passes
-        this.createStatRow(panelX, statsY + rowHeight, '🚗 Close Passes', runData.closePasses.toString(), '#00f5ff');
+        this.createPixelStatRow(statsX, statY, 'PASSES', runData.closePasses.toString(), '#00ffff');
+        statY += rowH;
 
         // Best combo
-        this.createStatRow(panelX, statsY + rowHeight * 2, '⚡ Best Combo', `x${runData.maxCombo}`, '#ffcc00');
+        this.createPixelStatRow(statsX, statY, 'COMBO', `x${runData.maxCombo}`, '#ffcc00');
+        statY += rowH + 10;
 
-        // Divider line
-        const dividerY = statsY + rowHeight * 3 + 10;
+        // Divider
         const divider = this.add.graphics();
-        divider.lineStyle(1, 0x3d3d5c, 0.6);
-        divider.lineBetween(panelX - 100, dividerY, panelX + 100, dividerY);
+        divider.lineStyle(2, 0x333344, 1);
+        divider.lineBetween(statsX - 100, statY, statsX + 100, statY);
 
-        // Total bank display (prominent)
-        const totalY = dividerY + 30;
-        this.add.text(panelX, totalY, 'TOTAL BANK', {
-            fontFamily: 'Rajdhani',
-            fontSize: '14px',
-            color: '#7a7a8a'
+        // Total bank
+        statY += 20;
+        this.add.text(statsX, statY, 'TOTAL BANK', {
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: '#666688'
         }).setOrigin(0.5);
 
-        const totalMoney = this.add.text(panelX, totalY + 30, `$${saveData.money.toLocaleString()}`, {
-            fontFamily: 'Orbitron',
-            fontSize: '36px',
+        const totalText = this.add.text(statsX, statY + 28, `$${saveData.money.toLocaleString()}`, {
+            fontFamily: 'monospace',
+            fontSize: '28px',
             fontStyle: 'bold',
-            color: '#00ff88'
+            color: '#00ff00'
         }).setOrigin(0.5);
 
-        // Money count-up animation
+        // Count-up animation
         this.tweens.addCounter({
             from: saveData.money - runData.money,
             to: saveData.money,
-            duration: 1500,
+            duration: 1200,
             ease: 'Cubic.easeOut',
             onUpdate: (tween) => {
-                totalMoney.setText(`$${Math.floor(tween.getValue()).toLocaleString()}`);
+                totalText.setText(`$${Math.floor(tween.getValue()).toLocaleString()}`);
             }
         });
     }
 
-    createStatRow(x, y, label, value, valueColor) {
-        this.add.text(x - 100, y, label, {
-            fontFamily: 'Rajdhani',
-            fontSize: '16px',
-            color: '#a0a0b0'
+    createPixelStatRow(x, y, label, value, color) {
+        this.add.text(x - 90, y, label, {
+            fontFamily: 'monospace',
+            fontSize: '14px',
+            color: '#888899'
         }).setOrigin(0, 0.5);
 
-        this.add.text(x + 100, y, value, {
-            fontFamily: 'Orbitron',
-            fontSize: '20px',
+        this.add.text(x + 90, y, value, {
+            fontFamily: 'monospace',
+            fontSize: '18px',
             fontStyle: 'bold',
-            color: valueColor
+            color: color
         }).setOrigin(1, 0.5);
     }
 
-    createButtons(width, height) {
-        const buttonY = height - 180;
+    createPixelButtons(width, height) {
+        const startY = height - 190;
 
-        // Play Again (primary)
-        this.createButton(width / 2, buttonY, 'PLAY AGAIN', 0x00f5ff, () => this.playAgain(), true);
+        // Play Again
+        this.createPixelButton(width / 2, startY, 'PLAY AGAIN', 0x00ff00, () => this.playAgain(), true);
 
         // Garage
-        this.createButton(width / 2, buttonY + 60, 'GARAGE', 0xff00e5, () => this.openGarage(), false);
+        this.createPixelButton(width / 2, startY + 55, 'GARAGE', 0xff00ff, () => this.openGarage(), false);
 
         // Menu
-        this.createButton(width / 2, buttonY + 115, 'MENU', 0x5a5a6a, () => this.goToMenu(), false);
+        this.createPixelButton(width / 2, startY + 105, 'MENU', 0x666688, () => this.goToMenu(), false);
 
-        // Control hints
-        this.add.text(width / 2, height - 25, 'SPACE Retry • G Garage • M Menu', {
-            fontFamily: 'Rajdhani',
-            fontSize: '11px',
-            color: '#4a4a5a'
+        // Hints
+        this.add.text(width / 2, height - 25, 'SPACE=RETRY  G=GARAGE  M=MENU', {
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            color: '#444466'
         }).setOrigin(0.5);
     }
 
-    createButton(x, y, text, color, callback, isPrimary) {
-        const btnWidth = isPrimary ? 220 : 180;
-        const btnHeight = isPrimary ? 50 : 40;
+    createPixelButton(x, y, text, color, callback, isPrimary) {
+        const btnWidth = isPrimary ? 180 : 140;
+        const btnHeight = isPrimary ? 42 : 34;
 
         const container = this.add.container(x, y);
 
-        // Glow
-        const glow = this.add.graphics();
-        glow.fillStyle(color, 0.15);
-        glow.fillRoundedRect(-btnWidth / 2 - 3, -btnHeight / 2 - 3, btnWidth + 6, btnHeight + 6, 14);
-        container.add(glow);
+        // Border
+        const border = this.add.graphics();
+        border.lineStyle(3, color, 1);
+        border.strokeRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight);
+        border.lineStyle(1, 0xffffff, 0.2);
+        border.strokeRect(-btnWidth / 2 + 3, -btnHeight / 2 + 3, btnWidth - 6, btnHeight - 6);
+        container.add(border);
 
         // Background
         const bg = this.add.graphics();
-        bg.fillStyle(0x1a1a2e, 0.95);
-        bg.fillRoundedRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight, 10);
-        bg.lineStyle(2, color, 1);
-        bg.strokeRoundedRect(-btnWidth / 2, -btnHeight / 2, btnWidth, btnHeight, 10);
+        bg.fillStyle(0x1a1a2e, 0.9);
+        bg.fillRect(-btnWidth / 2 + 3, -btnHeight / 2 + 3, btnWidth - 6, btnHeight - 6);
         container.add(bg);
 
         // Text
         const btnText = this.add.text(0, 0, text, {
-            fontFamily: 'Orbitron',
-            fontSize: isPrimary ? '20px' : '16px',
+            fontFamily: 'monospace',
+            fontSize: isPrimary ? '18px' : '14px',
             fontStyle: 'bold',
-            color: '#ffffff'
+            color: Phaser.Display.Color.IntegerToColor(color).rgba
         }).setOrigin(0.5);
         container.add(btnText);
+
+        // Selection arrow
+        const arrow = this.add.text(-btnWidth / 2 - 16, 0, '>', {
+            fontFamily: 'monospace',
+            fontSize: '18px',
+            fontStyle: 'bold',
+            color: Phaser.Display.Color.IntegerToColor(color).rgba
+        }).setOrigin(0.5).setAlpha(0);
+        container.add(arrow);
 
         // Hit area
         const hitArea = this.add.rectangle(0, 0, btnWidth, btnHeight, 0x000000, 0);
@@ -273,28 +279,22 @@ class GameOverScene extends Phaser.Scene {
         hitArea.setInteractive({ useHandCursor: true });
 
         hitArea.on('pointerover', () => {
-            this.tweens.add({ targets: container, scaleX: 1.05, scaleY: 1.05, duration: 80 });
-            glow.clear();
-            glow.fillStyle(color, 0.35);
-            glow.fillRoundedRect(-btnWidth / 2 - 5, -btnHeight / 2 - 5, btnWidth + 10, btnHeight + 10, 16);
+            bg.clear();
+            bg.fillStyle(color, 0.2);
+            bg.fillRect(-btnWidth / 2 + 3, -btnHeight / 2 + 3, btnWidth - 6, btnHeight - 6);
+            arrow.setAlpha(1);
         });
 
         hitArea.on('pointerout', () => {
-            this.tweens.add({ targets: container, scaleX: 1, scaleY: 1, duration: 80 });
-            glow.clear();
-            glow.fillStyle(color, 0.15);
-            glow.fillRoundedRect(-btnWidth / 2 - 3, -btnHeight / 2 - 3, btnWidth + 6, btnHeight + 6, 14);
+            bg.clear();
+            bg.fillStyle(0x1a1a2e, 0.9);
+            bg.fillRect(-btnWidth / 2 + 3, -btnHeight / 2 + 3, btnWidth - 6, btnHeight - 6);
+            arrow.setAlpha(0);
         });
 
         hitArea.on('pointerdown', () => {
-            this.tweens.add({
-                targets: container,
-                scaleX: 0.95,
-                scaleY: 0.95,
-                duration: 50,
-                yoyo: true,
-                onComplete: callback
-            });
+            this.cameras.main.flash(50, 255, 255, 255);
+            this.time.delayedCall(100, callback);
         });
 
         return container;
@@ -308,22 +308,22 @@ class GameOverScene extends Phaser.Scene {
             maxCombo: 0
         };
 
-        this.cameras.main.fadeOut(300, 0, 0, 0);
-        this.time.delayedCall(300, () => {
+        this.cameras.main.fadeOut(200, 0, 0, 0);
+        this.time.delayedCall(200, () => {
             this.scene.start('GameScene');
         });
     }
 
     openGarage() {
-        this.cameras.main.fadeOut(300, 0, 0, 0);
-        this.time.delayedCall(300, () => {
+        this.cameras.main.fadeOut(200, 0, 0, 0);
+        this.time.delayedCall(200, () => {
             this.scene.start('GarageScene');
         });
     }
 
     goToMenu() {
-        this.cameras.main.fadeOut(300, 0, 0, 0);
-        this.time.delayedCall(300, () => {
+        this.cameras.main.fadeOut(200, 0, 0, 0);
+        this.time.delayedCall(200, () => {
             this.scene.start('MenuScene');
         });
     }

@@ -142,61 +142,62 @@ class GameScene extends Phaser.Scene {
         this.hudContainer = this.add.container(0, 0);
         this.hudContainer.setDepth(100);
 
-        // Top bar background
+        // Top bar background (pixel style)
         const topBar = this.add.graphics();
-        topBar.fillStyle(0x0a0a18, 0.9);
-        topBar.fillRect(0, 0, width, 60);
-        topBar.fillStyle(0xff00e5, 0.8);
-        topBar.fillRect(0, 58, width, 2);
+        topBar.fillStyle(0x0a0a18, 0.95);
+        topBar.fillRect(0, 0, width, 50);
+        // Pixel border at bottom
+        topBar.fillStyle(0x00ffff, 0.8);
+        topBar.fillRect(0, 48, width, 2);
         this.hudContainer.add(topBar);
 
-        // Money display
-        this.moneyText = this.add.text(20, 18, '$0', {
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '26px',
+        // Money display (large pixel font)
+        this.moneyText = this.add.text(16, 14, '$0', {
+            fontFamily: 'monospace',
+            fontSize: '28px',
             fontStyle: 'bold',
-            color: '#00ff88'
+            color: '#00ff00'
         });
         this.hudContainer.add(this.moneyText);
 
-        // Combo display
-        this.comboContainer = this.add.container(width / 2, 30);
+        // Combo display (center)
+        this.comboContainer = this.add.container(width / 2, 25);
         this.comboText = this.add.text(0, 0, '', {
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '20px',
+            fontFamily: 'monospace',
+            fontSize: '18px',
             fontStyle: 'bold',
             color: '#ffcc00'
         }).setOrigin(0.5);
         this.comboContainer.add(this.comboText);
         this.hudContainer.add(this.comboContainer);
 
-        // Speed display
-        this.speedText = this.add.text(width - 20, 18, '0 MPH', {
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '22px',
+        // Speed display (right side)
+        this.speedText = this.add.text(width - 16, 14, '0 MPH', {
+            fontFamily: 'monospace',
+            fontSize: '24px',
             fontStyle: 'bold',
-            color: '#00f5ff'
+            color: '#00ffff'
         }).setOrigin(1, 0);
         this.hudContainer.add(this.speedText);
 
-        // Boost meter
-        this.createBoostMeter(width - 75, 48);
+        // Boost meter (pixel bar)
+        this.createBoostMeter(width - 90, 42);
 
         // Floating text pool for rewards
         this.floatingTexts = [];
     }
 
     createBoostMeter(x, y) {
-        // Background bar
+        // Pixel-style background bar
         this.boostMeterBg = this.add.graphics();
-        this.boostMeterBg.fillStyle(0x222233, 1);
-        this.boostMeterBg.fillRoundedRect(x, y - 4, 60, 8, 4);
-        this.boostMeterBg.lineStyle(1, 0x444466, 1);
-        this.boostMeterBg.strokeRoundedRect(x, y - 4, 60, 8, 4);
+        this.boostMeterBg.fillStyle(0x333344, 1);
+        this.boostMeterBg.fillRect(x, y - 4, 70, 10);
+        this.boostMeterBg.lineStyle(2, 0x555566, 1);
+        this.boostMeterBg.strokeRect(x, y - 4, 70, 10);
         this.hudContainer.add(this.boostMeterBg);
 
-        // Fill bar
-        this.boostMeterFill = this.add.rectangle(x + 2, y, 0, 4, 0xffcc00);
+        // Fill bar (no rounded edges for pixel effect)
+        this.boostMeterFill = this.add.rectangle(x + 2, y + 1, 0, 6, 0xffcc00);
         this.boostMeterFill.setOrigin(0, 0.5);
         this.hudContainer.add(this.boostMeterFill);
     }

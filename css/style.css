@@ -52,6 +52,8 @@ body {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     background:
         radial-gradient(ellipse at 50% 0%, rgba(0, 245, 255, 0.1) 0%, transparent 50%),
         radial-gradient(ellipse at 0% 100%, rgba(255, 0, 229, 0.1) 0%, transparent 50%),

@@ -12,7 +12,7 @@ window.addEventListener('load', () => {
         backgroundColor: '#0a0a12',
         scale: {
             mode: Phaser.Scale.FIT,
-            autoCenter: Phaser.Scale.CENTER_BOTH,
+            autoCenter: Phaser.Scale.NONE,
             min: {
                 width: 320,
                 height: 480
@@ -37,8 +37,9 @@ window.addEventListener('load', () => {
         },
         scene: [BootScene, MenuScene, GameScene, GarageScene, GameOverScene],
         render: {
-            pixelArt: false,
-            antialias: true
+            pixelArt: true,
+            antialias: false,
+            roundPixels: true
         }
     };
 
