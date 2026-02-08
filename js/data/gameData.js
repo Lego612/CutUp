@@ -14,15 +14,15 @@ const GAME_CONFIG = {
     ROAD_MARGIN: 40,
 
     // Speed settings (pixels per second)
-    BASE_SCROLL_SPEED: 300,
-    MAX_SCROLL_SPEED: 800,
+    BASE_SCROLL_SPEED: 150,
+    MAX_SCROLL_SPEED: 900,
 
     // Gameplay
     CLOSE_PASS_DISTANCE: 60,
     COMBO_TIMEOUT: 2000, // ms before combo resets
     BOOST_DURATION: 2000,
     BOOST_COOLDOWN: 5000,
-    BOOST_MULTIPLIER: 1.5,
+    BOOST_MULTIPLIER: 1.8,
 
     // Scoring
     CLOSE_PASS_REWARD: 50,

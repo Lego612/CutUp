@@ -36,7 +36,7 @@ class PlayerCar {
         this.currentSpeed = GAME_CONFIG.BASE_SCROLL_SPEED;
         this.targetSpeed = GAME_CONFIG.BASE_SCROLL_SPEED;
         this.maxSpeed = GAME_CONFIG.MAX_SCROLL_SPEED * (this.stats.topSpeed / 100);
-        this.accelerationRate = 50 * (this.stats.acceleration / 100);
+        this.accelerationRate = 200 * (this.stats.acceleration / 100); // Much faster acceleration
 
         // Visual effects container
         this.effects = scene.add.container(x, y);
@@ -198,7 +198,7 @@ class PlayerCar {
      * Apply brakes
      */
     brake() {
-        this.targetSpeed = GAME_CONFIG.BASE_SCROLL_SPEED * 0.6;
+        this.targetSpeed = GAME_CONFIG.BASE_SCROLL_SPEED * 0.3; // Very slow when braking
     }
 
     /**
