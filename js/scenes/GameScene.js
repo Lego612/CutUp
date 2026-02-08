@@ -254,17 +254,6 @@ class GameScene extends Phaser.Scene {
             }
         });
 
-        // Visual touch indicators (semi-transparent)
-        this.leftIndicator = this.add.text(40, height - 50, '◀', {
-            fontSize: '36px',
-            color: '#ffffff'
-        }).setAlpha(0.3).setDepth(60);
-
-        this.rightIndicator = this.add.text(width - 60, height - 50, '▶', {
-            fontSize: '36px',
-            color: '#ffffff'
-        }).setAlpha(0.3).setDepth(60);
-
         // Swipe detection for alternative control
         this.input.on('pointerdown', (pointer) => {
             this.touchStartX = pointer.x;
