@@ -43,38 +43,73 @@ class GameScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        // Road background
-        this.roadBg = this.add.graphics();
-        this.roadBg.fillStyle(GAME_CONFIG.COLORS.ROAD, 1);
-
         const roadWidth = GAME_CONFIG.LANES * GAME_CONFIG.LANE_WIDTH;
         const roadX = GAME_CONFIG.ROAD_MARGIN;
+
+        // Outer glow effects (behind everything)
+        this.roadGlow = this.add.graphics();
+        this.roadGlow.fillStyle(0xff0066, 0.15);
+        this.roadGlow.fillRect(roadX - 12, 0, 12, height);
+        this.roadGlow.fillStyle(0xff0066, 0.08);
+        this.roadGlow.fillRect(roadX - 20, 0, 8, height);
+
+        this.roadGlow.fillStyle(0xff0066, 0.15);
+        this.roadGlow.fillRect(roadX + roadWidth, 0, 12, height);
+        this.roadGlow.fillStyle(0xff0066, 0.08);
+        this.roadGlow.fillRect(roadX + roadWidth + 12, 0, 8, height);
+
+        // Shoulder/grass areas with gradient
+        this.roadBg = this.add.graphics();
+        this.roadBg.fillGradientStyle(0x0a0a14, 0x0a0a14, 0x1a0a2e, 0x1a0a2e, 1);
+        this.roadBg.fillRect(0, 0, roadX - 8, height);
+        this.roadBg.fillRect(roadX + roadWidth + 8, 0, width - (roadX + roadWidth + 8), height);
+
+        // Road surface with subtle texture feel
+        this.roadBg.fillStyle(0x181828, 1);
         this.roadBg.fillRect(roadX, 0, roadWidth, height);
 
-        // Side strips (road edges)
-        this.roadBg.fillStyle(GAME_CONFIG.COLORS.ROAD_EDGE, 1);
+        // Road edge details
+        this.roadBg.fillStyle(0x222235, 1);
+        this.roadBg.fillRect(roadX, 0, 3, height);
+        this.roadBg.fillRect(roadX + roadWidth - 3, 0, 3, height);
+
+        // Neon side strips (road edges)
+        this.roadBg.fillStyle(0xff3366, 1);
         this.roadBg.fillRect(roadX - 4, 0, 4, height);
         this.roadBg.fillRect(roadX + roadWidth, 0, 4, height);
 
-        // Grass/shoulder areas
-        this.roadBg.fillStyle(GAME_CONFIG.COLORS.GRASS, 1);
-        this.roadBg.fillRect(0, 0, roadX - 4, height);
-        this.roadBg.fillRect(roadX + roadWidth + 4, 0, width - (roadX + roadWidth + 4), height);
+        // Inner glow on edges
+        this.roadBg.fillStyle(0xff6699, 0.4);
+        this.roadBg.fillRect(roadX, 0, 2, height);
+        this.roadBg.fillRect(roadX + roadWidth - 2, 0, 2, height);
 
-        // Lane markers - animated
+        // Lane markers - animated with glow
         this.laneMarkers = [];
         for (let lane = 1; lane < GAME_CONFIG.LANES; lane++) {
             const laneX = roadX + (lane * GAME_CONFIG.LANE_WIDTH);
+            const isCenter = lane === Math.floor(GAME_CONFIG.LANES / 2);
 
             for (let i = 0; i < 12; i++) {
+                // Glow behind center lane marker
+                if (isCenter) {
+                    const glow = this.add.rectangle(
+                        laneX,
+                        i * 80 - 40,
+                        8,
+                        44,
+                        0xffcc00,
+                        0.2
+                    );
+                    glow.setDepth(0);
+                    this.laneMarkers.push(glow);
+                }
+
                 const marker = this.add.rectangle(
                     laneX,
                     i * 80 - 40,
-                    4,
-                    40,
-                    lane === Math.floor(GAME_CONFIG.LANES / 2) ?
-                        GAME_CONFIG.COLORS.LANE_MARKER_CENTER :
-                        GAME_CONFIG.COLORS.LANE_MARKER
+                    isCenter ? 5 : 3,
+                    isCenter ? 45 : 35,
+                    isCenter ? 0xffcc00 : 0x4a4a6a
                 );
                 marker.setDepth(1);
                 this.laneMarkers.push(marker);
@@ -107,56 +142,87 @@ class GameScene extends Phaser.Scene {
         this.hudContainer = this.add.container(0, 0);
         this.hudContainer.setDepth(100);
 
-        // Top bar background
+        // Top bar background with glassmorphism
         const topBar = this.add.graphics();
-        topBar.fillStyle(0x0a0a12, 0.9);
-        topBar.fillRect(0, 0, width, 70);
-        topBar.lineStyle(2, 0x3d3d5c, 1);
-        topBar.lineBetween(0, 70, width, 70);
+        topBar.fillStyle(0x0a0a18, 0.85);
+        topBar.fillRect(0, 0, width, 75);
+
+        // Accent line at bottom
+        topBar.fillStyle(0xff00e5, 0.6);
+        topBar.fillRect(0, 73, width, 2);
+        topBar.fillStyle(0xff00e5, 0.2);
+        topBar.fillRect(0, 70, width, 3);
+
         this.hudContainer.add(topBar);
 
-        // Money display
-        this.moneyText = this.add.text(20, 15, '$0', {
+        // Money display with icon background
+        const moneyBg = this.add.graphics();
+        moneyBg.fillStyle(0x00ff88, 0.1);
+        moneyBg.fillRoundedRect(12, 10, 120, 35, 8);
+        moneyBg.lineStyle(1, 0x00ff88, 0.4);
+        moneyBg.strokeRoundedRect(12, 10, 120, 35, 8);
+        this.hudContainer.add(moneyBg);
+
+        this.moneyText = this.add.text(22, 18, '$0', {
             fontFamily: 'Orbitron',
-            fontSize: '28px',
+            fontSize: '24px',
             fontStyle: 'bold',
             color: '#00ff88'
         });
         this.hudContainer.add(this.moneyText);
 
         // Combo display
-        this.comboContainer = this.add.container(width / 2, 35);
+        this.comboContainer = this.add.container(width / 2, 38);
         this.comboText = this.add.text(0, 0, '', {
             fontFamily: 'Orbitron',
-            fontSize: '24px',
+            fontSize: '22px',
             fontStyle: 'bold',
             color: '#ffcc00'
         }).setOrigin(0.5);
         this.comboContainer.add(this.comboText);
         this.hudContainer.add(this.comboContainer);
 
-        // Speed display
-        this.speedText = this.add.text(width - 20, 15, '0 MPH', {
-            fontFamily: 'Rajdhani',
-            fontSize: '22px',
+        // Speed display with background
+        const speedBg = this.add.graphics();
+        speedBg.fillStyle(0x00f5ff, 0.1);
+        speedBg.fillRoundedRect(width - 130, 10, 118, 35, 8);
+        speedBg.lineStyle(1, 0x00f5ff, 0.4);
+        speedBg.strokeRoundedRect(width - 130, 10, 118, 35, 8);
+        this.hudContainer.add(speedBg);
+
+        this.speedText = this.add.text(width - 22, 18, '0 MPH', {
+            fontFamily: 'Orbitron',
+            fontSize: '20px',
             fontStyle: 'bold',
             color: '#00f5ff'
         }).setOrigin(1, 0);
         this.hudContainer.add(this.speedText);
 
         // Boost meter
-        this.createBoostMeter(width - 50, 50);
+        this.createBoostMeter(width - 70, 55);
 
         // Floating text pool for rewards
         this.floatingTexts = [];
     }
 
     createBoostMeter(x, y) {
-        this.boostMeterBg = this.add.rectangle(x, y, 60, 8, 0x1a1a2e);
-        this.boostMeterBg.setStrokeStyle(1, 0x3d3d5c);
+        // Boost label
+        const boostLabel = this.add.text(x - 45, y - 1, 'BOOST', {
+            fontFamily: 'Rajdhani',
+            fontSize: '10px',
+            color: '#666680'
+        }).setOrigin(0, 0.5);
+        this.hudContainer.add(boostLabel);
+
+        // Background
+        this.boostMeterBg = this.add.graphics();
+        this.boostMeterBg.fillStyle(0x1a1a2e, 1);
+        this.boostMeterBg.fillRoundedRect(x - 5, y - 5, 70, 10, 3);
+        this.boostMeterBg.lineStyle(1, 0x3d3d5c, 1);
+        this.boostMeterBg.strokeRoundedRect(x - 5, y - 5, 70, 10, 3);
         this.hudContainer.add(this.boostMeterBg);
 
-        this.boostMeterFill = this.add.rectangle(x - 28, y, 0, 6, 0xffff00);
+        this.boostMeterFill = this.add.rectangle(x - 3, y, 0, 6, 0xffff00);
         this.boostMeterFill.setOrigin(0, 0.5);
         this.hudContainer.add(this.boostMeterFill);
     }

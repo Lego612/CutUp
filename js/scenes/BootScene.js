@@ -92,27 +92,49 @@ class BootScene extends Phaser.Scene {
     createCarTexture(graphics, key, color, width, height) {
         graphics.clear();
 
-        // Car body with gradient effect
-        graphics.fillStyle(color, 1);
-        graphics.fillRoundedRect(2, 2, width - 4, height - 4, 4);
+        // Shadow
+        graphics.fillStyle(0x000000, 0.3);
+        graphics.fillEllipse(width / 2 + 1, height / 2 + 2, width - 2, height - 2);
 
-        // Darker shade for depth
-        const darkerColor = Phaser.Display.Color.ValueToColor(color).darken(30).color;
+        // Car body base (darker outline)
+        const darkerColor = Phaser.Display.Color.ValueToColor(color).darken(40).color;
         graphics.fillStyle(darkerColor, 1);
-        graphics.fillRect(4, height * 0.3, width - 8, 4);
+        graphics.fillRoundedRect(2, 2, width - 4, height - 4, 5);
+
+        // Car body main
+        graphics.fillStyle(color, 1);
+        graphics.fillRoundedRect(3, 3, width - 6, height - 6, 4);
+
+        // Highlight
+        const lighterColor = Phaser.Display.Color.ValueToColor(color).lighten(25).color;
+        graphics.fillStyle(lighterColor, 0.4);
+        graphics.fillRoundedRect(5, 5, width - 12, height * 0.3, 3);
+
+        // Body line
+        graphics.fillStyle(darkerColor, 0.8);
+        graphics.fillRect(5, height * 0.35, width - 10, 2);
 
         // Windshield
-        graphics.fillStyle(0x2c3e50, 0.8);
-        graphics.fillRoundedRect(5, 6, width - 10, height * 0.2, 2);
+        graphics.fillStyle(0x1a2530, 0.9);
+        graphics.fillRoundedRect(5, 7, width - 10, height * 0.18, 3);
+
+        // Windshield reflection
+        graphics.fillStyle(0x4a8eff, 0.25);
+        graphics.fillRoundedRect(7, 9, 5, height * 0.10, 1);
 
         // Rear window
-        graphics.fillStyle(0x2c3e50, 0.6);
-        graphics.fillRoundedRect(5, height - 6 - height * 0.12, width - 10, height * 0.12, 2);
+        graphics.fillStyle(0x1a2530, 0.8);
+        graphics.fillRoundedRect(5, height - 7 - height * 0.12, width - 10, height * 0.12, 2);
+
+        // Headlights
+        graphics.fillStyle(0xffffcc, 0.8);
+        graphics.fillRect(4, 3, 5, 3);
+        graphics.fillRect(width - 9, 3, 5, 3);
 
         // Taillights
-        graphics.fillStyle(0xff3333, 1);
-        graphics.fillRect(3, height - 5, 5, 3);
-        graphics.fillRect(width - 8, height - 5, 5, 3);
+        graphics.fillStyle(0xff2222, 1);
+        graphics.fillRect(4, height - 6, 6, 4);
+        graphics.fillRect(width - 10, height - 6, 6, 4);
 
         graphics.generateTexture(key, width, height);
     }
@@ -132,50 +154,82 @@ class BootScene extends Phaser.Scene {
     createPlayerCarTexture(graphics, key, color, width, height) {
         graphics.clear();
 
-        // Shadow
-        graphics.fillStyle(0x000000, 0.3);
-        graphics.fillEllipse(width / 2 + 2, height / 2 + 3, width - 4, height - 4);
+        // Neon underglow (outer glow)
+        const glowColor = Phaser.Display.Color.ValueToColor(color).lighten(30).color;
+        graphics.fillStyle(glowColor, 0.15);
+        graphics.fillEllipse(width / 2, height / 2 + 5, width + 12, height + 8);
+        graphics.fillStyle(glowColor, 0.25);
+        graphics.fillEllipse(width / 2, height / 2 + 3, width + 6, height + 4);
 
-        // Car body
-        graphics.fillStyle(color, 1);
-        graphics.fillRoundedRect(2, 2, width - 4, height - 4, 6);
+        // Main shadow
+        graphics.fillStyle(0x000000, 0.4);
+        graphics.fillEllipse(width / 2 + 2, height / 2 + 4, width - 2, height - 2);
 
-        // Body highlight
-        const lighterColor = Phaser.Display.Color.ValueToColor(color).lighten(20).color;
-        graphics.fillStyle(lighterColor, 0.5);
-        graphics.fillRoundedRect(4, 4, width - 12, height * 0.4, 4);
-
-        // Darker stripe for depth
-        const darkerColor = Phaser.Display.Color.ValueToColor(color).darken(30).color;
+        // Car body base
+        const darkerColor = Phaser.Display.Color.ValueToColor(color).darken(35).color;
         graphics.fillStyle(darkerColor, 1);
-        graphics.fillRect(4, height * 0.45, width - 8, 3);
+        graphics.fillRoundedRect(3, 3, width - 6, height - 6, 8);
 
-        // Windshield (front)
-        graphics.fillStyle(0x1a2a3a, 0.9);
-        graphics.fillRoundedRect(6, 8, width - 12, height * 0.22, 3);
+        // Car body main
+        graphics.fillStyle(color, 1);
+        graphics.fillRoundedRect(4, 4, width - 8, height - 8, 7);
 
-        // Windshield reflection
-        graphics.fillStyle(0x4a9eff, 0.3);
-        graphics.fillRoundedRect(8, 10, width - 16, height * 0.08, 2);
+        // Metallic highlight (top reflection)
+        const lighterColor = Phaser.Display.Color.ValueToColor(color).lighten(40).color;
+        graphics.fillStyle(lighterColor, 0.6);
+        graphics.fillRoundedRect(6, 6, width - 14, height * 0.35, 5);
+
+        // Secondary highlight
+        graphics.fillStyle(0xffffff, 0.2);
+        graphics.fillRoundedRect(8, 8, width - 18, height * 0.15, 3);
+
+        // Body line accent
+        graphics.fillStyle(darkerColor, 1);
+        graphics.fillRect(6, height * 0.42, width - 12, 2);
+        graphics.fillStyle(lighterColor, 0.3);
+        graphics.fillRect(6, height * 0.44, width - 12, 1);
+
+        // Windshield (front) with gradient effect
+        graphics.fillStyle(0x0a1520, 0.95);
+        graphics.fillRoundedRect(8, 10, width - 16, height * 0.20, 4);
+
+        // Windshield reflection streaks
+        graphics.fillStyle(0x4a9eff, 0.4);
+        graphics.fillRoundedRect(10, 12, 6, height * 0.12, 2);
+        graphics.fillStyle(0x4a9eff, 0.25);
+        graphics.fillRoundedRect(18, 12, 4, height * 0.10, 1);
 
         // Rear window
-        graphics.fillStyle(0x1a2a3a, 0.8);
-        graphics.fillRoundedRect(6, height - 10 - height * 0.15, width - 12, height * 0.15, 3);
+        graphics.fillStyle(0x0a1520, 0.9);
+        graphics.fillRoundedRect(8, height - 12 - height * 0.14, width - 16, height * 0.14, 4);
 
-        // Headlights
-        graphics.fillStyle(0xffffee, 1);
-        graphics.fillRect(5, 3, 6, 3);
-        graphics.fillRect(width - 11, 3, 6, 3);
+        // Headlights (bright with glow)
+        graphics.fillStyle(0xffffaa, 0.5);
+        graphics.fillRect(4, 2, 10, 6);
+        graphics.fillRect(width - 14, 2, 10, 6);
+        graphics.fillStyle(0xffffff, 1);
+        graphics.fillRect(6, 3, 6, 4);
+        graphics.fillRect(width - 12, 3, 6, 4);
 
-        // Taillights
+        // Taillights (glowing red)
+        graphics.fillStyle(0xff0000, 0.5);
+        graphics.fillRect(4, height - 7, 10, 6);
+        graphics.fillRect(width - 14, height - 7, 10, 6);
         graphics.fillStyle(0xff3333, 1);
-        graphics.fillRect(4, height - 5, 7, 3);
-        graphics.fillRect(width - 11, height - 5, 7, 3);
+        graphics.fillRect(6, height - 6, 6, 4);
+        graphics.fillRect(width - 12, height - 6, 6, 4);
 
-        // Side mirrors
-        graphics.fillStyle(darkerColor, 1);
-        graphics.fillRect(0, height * 0.25, 3, 6);
-        graphics.fillRect(width - 3, height * 0.25, 3, 6);
+        // Side mirrors with chrome effect
+        graphics.fillStyle(0x222222, 1);
+        graphics.fillRect(-1, height * 0.28, 5, 8);
+        graphics.fillRect(width - 4, height * 0.28, 5, 8);
+        graphics.fillStyle(lighterColor, 0.6);
+        graphics.fillRect(0, height * 0.29, 3, 5);
+        graphics.fillRect(width - 3, height * 0.29, 3, 5);
+
+        // Racing stripe (subtle)
+        graphics.fillStyle(0xffffff, 0.1);
+        graphics.fillRect(width / 2 - 2, 4, 4, height - 8);
 
         graphics.generateTexture(key, width, height);
     }
