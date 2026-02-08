@@ -228,13 +228,6 @@ class GameScene extends Phaser.Scene {
         const height = this.cameras.main.height;
         const scene = this;
 
-        // Visual feedback indicator (temporary for debugging)
-        this.touchFeedback = this.add.text(width / 2, 100, '', {
-            fontSize: '24px',
-            fontFamily: 'Arial',
-            color: '#00ff00'
-        }).setOrigin(0.5).setDepth(2000);
-
         // Create invisible interactive zones
         this.leftTouchZone = this.add.rectangle(width / 4, height / 2, width / 2, height, 0xff0000, 0);
         this.leftTouchZone.setInteractive({ useHandCursor: true });
@@ -290,41 +283,15 @@ class GameScene extends Phaser.Scene {
     }
 
     handleTouchInput(direction) {
-        // Show visual feedback with debug info
-        const dir = direction.startsWith('left') ? 'LEFT' : 'RIGHT';
-        const source = direction.split('-')[1];
+        if (this.isGameOver) return;
+        if (this.laneChangeCooldown > 0) return;
 
-        // Build debug message
-        let debugMsg = dir + ' (' + source + ')';
-
-        if (this.isGameOver) {
-            debugMsg += ' [GAME OVER]';
-            this.touchFeedback.setText(debugMsg);
-            return;
-        }
-
-        if (this.laneChangeCooldown > 0) {
-            debugMsg += ' [COOLDOWN: ' + this.laneChangeCooldown + ']';
-            this.touchFeedback.setText(debugMsg);
-            return;
-        }
-
-        // Actually try to move
         if (direction.startsWith('left')) {
             this.player.moveLeft();
-            debugMsg += ' [MOVED LEFT to lane ' + this.player.currentLane + ']';
         } else {
             this.player.moveRight();
-            debugMsg += ' [MOVED RIGHT to lane ' + this.player.currentLane + ']';
         }
-
-        this.touchFeedback.setText(debugMsg);
         this.laneChangeCooldown = 100;
-
-        // Clear feedback after a moment
-        this.time.delayedCall(1000, () => {
-            if (this.touchFeedback) this.touchFeedback.setText('');
-        });
     }
 
     update(time, delta) {
