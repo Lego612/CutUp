@@ -156,7 +156,10 @@ class PlayerCar {
         if (this.boostActive || this.boostCooldown) return false;
 
         this.boostActive = true;
-        this.targetSpeed = this.maxSpeed * GAME_CONFIG.BOOST_MULTIPLIER;
+
+        // Boost power is affected by the boost stat (nitro upgrade)
+        const boostMultiplier = GAME_CONFIG.BOOST_MULTIPLIER * (this.stats.boost / 100);
+        this.targetSpeed = this.maxSpeed * boostMultiplier;
 
         // Visual boost effect
         this.scene.tweens.add({

@@ -57,6 +57,7 @@ const VEHICLES = {
             topSpeed: 60,      // Slow starter car
             acceleration: 50,
             handling: 85,
+            boost: 100,        // Boost power (base 100%)
             durability: 100,
             earnings: 1.0
         },
@@ -72,6 +73,7 @@ const VEHICLES = {
             topSpeed: 65,      // Slightly faster, better handling
             acceleration: 60,
             handling: 100,
+            boost: 100,
             durability: 75,
             earnings: 1.1
         },
@@ -87,6 +89,7 @@ const VEHICLES = {
             topSpeed: 100,     // First real speed upgrade
             acceleration: 90,
             handling: 80,
+            boost: 110,        // Better base boost
             durability: 65,
             earnings: 1.3
         },
@@ -102,6 +105,7 @@ const VEHICLES = {
             topSpeed: 140,     // Big speed jump
             acceleration: 120,
             handling: 65,
+            boost: 120,
             durability: 80,
             earnings: 1.5
         },
@@ -117,6 +121,7 @@ const VEHICLES = {
             topSpeed: 180,     // Very fast
             acceleration: 160,
             handling: 85,
+            boost: 140,
             durability: 50,
             earnings: 2.0
         },
@@ -132,6 +137,7 @@ const VEHICLES = {
             topSpeed: 250,     // INSANE speed - 4x faster than compact
             acceleration: 200,
             handling: 90,
+            boost: 180,        // Best boost
             durability: 40,
             earnings: 3.0
         },
