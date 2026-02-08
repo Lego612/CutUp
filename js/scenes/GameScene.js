@@ -225,48 +225,32 @@ class GameScene extends Phaser.Scene {
 
     setupTouchControls() {
         const width = this.cameras.main.width;
-        const scene = this;
+        const height = this.cameras.main.height;
 
-        // Phaser input - works on desktop and some mobile
-        this.input.on('pointerdown', (pointer) => {
-            scene.handleTouch(pointer.x);
-        });
+        // Create invisible interactive zones that cover the left and right halves
+        // Using setInteractive like the menu buttons which are confirmed working
 
-        // Also add DOM event listeners as fallback for mobile
-        const canvas = this.game.canvas;
-
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (e.touches.length > 0) {
-                const touch = e.touches[0];
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const x = (touch.clientX - rect.left) * scaleX;
-                scene.handleTouch(x);
-            }
-        }, { passive: false });
-
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const x = (e.clientX - rect.left) * scaleX;
-            scene.handleTouch(x);
-        });
-    }
-
-    handleTouch(x) {
-        if (this.isGameOver) return;
-        if (this.laneChangeCooldown > 0) return;
-
-        const width = this.cameras.main.width;
-
-        // Tap on left half = move left, tap on right half = move right
-        if (x < width / 2) {
+        // Left half zone
+        this.leftTouchZone = this.add.rectangle(width / 4, height / 2, width / 2, height, 0x000000, 0);
+        this.leftTouchZone.setInteractive();
+        this.leftTouchZone.setDepth(1000);
+        this.leftTouchZone.on('pointerdown', () => {
+            if (this.isGameOver) return;
+            if (this.laneChangeCooldown > 0) return;
             this.player.changeLane(-1);
-        } else {
+            this.laneChangeCooldown = 100;
+        });
+
+        // Right half zone
+        this.rightTouchZone = this.add.rectangle(width * 3 / 4, height / 2, width / 2, height, 0x000000, 0);
+        this.rightTouchZone.setInteractive();
+        this.rightTouchZone.setDepth(1000);
+        this.rightTouchZone.on('pointerdown', () => {
+            if (this.isGameOver) return;
+            if (this.laneChangeCooldown > 0) return;
             this.player.changeLane(1);
-        }
-        this.laneChangeCooldown = 100;
+            this.laneChangeCooldown = 100;
+        });
     }
 
     update(time, delta) {
