@@ -32,10 +32,10 @@ class PlayerCar {
         this.boostTimer = null;
         this.cooldownTimer = null;
 
-        // Speed
+        // Speed - each car has its own max speed cap
         this.currentSpeed = GAME_CONFIG.BASE_SCROLL_SPEED;
-        this.targetSpeed = GAME_CONFIG.BASE_SCROLL_SPEED;
         this.maxSpeed = GAME_CONFIG.MAX_SCROLL_SPEED * (this.stats.topSpeed / 100);
+        this.targetSpeed = this.maxSpeed; // Naturally accelerate to car's top speed
         this.accelerationRate = 200 * (this.stats.acceleration / 100); // Much faster acceleration
 
         // Visual effects container
