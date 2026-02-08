@@ -141,28 +141,38 @@ class GarageScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
 
-        // Vehicle name with background
-        const namePanelY = displayY + 100;
+        // Vehicle name with background - create a clickable container
+        const namePanelY = displayY + 90;
+        this.namePanelContainer = this.add.container(width / 2, namePanelY);
+
         const namePanel = this.add.graphics();
         namePanel.fillStyle(0x1a1a2e, 0.9);
-        namePanel.fillRoundedRect(width / 2 - 100, namePanelY - 15, 200, 35, 8);
+        namePanel.fillRoundedRect(-100, -15, 200, 60, 8);
         namePanel.lineStyle(2, 0x00f5ff, 0.8);
-        namePanel.strokeRoundedRect(width / 2 - 100, namePanelY - 15, 200, 35, 8);
+        namePanel.strokeRoundedRect(-100, -15, 200, 60, 8);
+        this.namePanelContainer.add(namePanel);
 
-        this.vehicleNameText = this.add.text(width / 2, namePanelY, 'Vehicle Name', {
+        this.vehicleNameText = this.add.text(0, 0, 'Vehicle Name', {
             fontFamily: 'monospace',
             fontSize: '18px',
             fontStyle: 'bold',
             color: '#ffffff'
         }).setOrigin(0.5);
+        this.namePanelContainer.add(this.vehicleNameText);
 
         // Lock/Price indicator
-        this.vehicleStatusText = this.add.text(width / 2, namePanelY + 30, '', {
+        this.vehicleStatusText = this.add.text(0, 25, '', {
             fontFamily: 'monospace',
             fontSize: '14px',
             fontStyle: 'bold',
             color: '#ffcc00'
         }).setOrigin(0.5);
+        this.namePanelContainer.add(this.vehicleStatusText);
+
+        // Hit area for the entire name panel
+        this.namePanelHitArea = this.add.rectangle(0, 15, 200, 60, 0x000000, 0);
+        this.namePanelContainer.add(this.namePanelHitArea);
+        this.namePanelHitArea.setInteractive({ useHandCursor: true });
     }
 
     createUpgradePanel(width, height) {
@@ -277,9 +287,9 @@ class GarageScene extends Phaser.Scene {
         // Right arrow
         const rightArrow = this.createArrowButton(width - 50, navY, '>', () => this.nextVehicle());
 
-        // Vehicle indicators
+        // Vehicle indicators - moved up to avoid overlap with name panel
         this.indicators = [];
-        const indicatorY = 340;
+        const indicatorY = 365;
         this.vehicleIds.forEach((id, i) => {
             const dot = this.add.circle(
                 width / 2 + (i - (this.vehicleIds.length - 1) / 2) * 20,
@@ -380,10 +390,20 @@ class GarageScene extends Phaser.Scene {
             this.vehicleStatusText.setColor('#ffcc00');
         }
 
-        // Make vehicle clickable for selection/purchase
+        // Make vehicle sprite clickable for selection/purchase
         this.vehicleSprite.setInteractive({ useHandCursor: true });
         this.vehicleSprite.off('pointerdown');
         this.vehicleSprite.on('pointerdown', () => {
+            if (isOwned) {
+                this.selectVehicle();
+            } else {
+                this.purchaseVehicle();
+            }
+        });
+
+        // Also make the name panel clickable
+        this.namePanelHitArea.off('pointerdown');
+        this.namePanelHitArea.on('pointerdown', () => {
             if (isOwned) {
                 this.selectVehicle();
             } else {
