@@ -142,46 +142,54 @@ class GameScene extends Phaser.Scene {
         this.hudContainer = this.add.container(0, 0);
         this.hudContainer.setDepth(100);
 
-        // Top bar background (pixel style)
+        // Top bar background (pixel style) - taller to fit all elements
         const topBar = this.add.graphics();
         topBar.fillStyle(0x0a0a18, 0.95);
-        topBar.fillRect(0, 0, width, 50);
+        topBar.fillRect(0, 0, width, 65);
         // Pixel border at bottom
         topBar.fillStyle(0x00ffff, 0.8);
-        topBar.fillRect(0, 48, width, 2);
+        topBar.fillRect(0, 63, width, 2);
         this.hudContainer.add(topBar);
 
-        // Money display (large pixel font)
-        this.moneyText = this.add.text(16, 14, '$0', {
+        // Money display (left side, top row)
+        this.moneyText = this.add.text(16, 8, '$0', {
             fontFamily: 'monospace',
-            fontSize: '28px',
+            fontSize: '24px',
             fontStyle: 'bold',
             color: '#00ff00'
         });
         this.hudContainer.add(this.moneyText);
 
-        // Combo display (center)
-        this.comboContainer = this.add.container(width / 2, 25);
+        // Combo display (left side, below money)
+        this.comboContainer = this.add.container(16, 38);
         this.comboText = this.add.text(0, 0, '', {
             fontFamily: 'monospace',
-            fontSize: '18px',
+            fontSize: '14px',
             fontStyle: 'bold',
             color: '#ffcc00'
-        }).setOrigin(0.5);
+        }).setOrigin(0, 0);
         this.comboContainer.add(this.comboText);
         this.hudContainer.add(this.comboContainer);
 
-        // Speed display (right side)
-        this.speedText = this.add.text(width - 16, 14, '0 MPH', {
+        // Speed display (right side, top row)
+        this.speedText = this.add.text(width - 16, 8, '0 MPH', {
             fontFamily: 'monospace',
-            fontSize: '24px',
+            fontSize: '22px',
             fontStyle: 'bold',
             color: '#00ffff'
         }).setOrigin(1, 0);
         this.hudContainer.add(this.speedText);
 
-        // Boost meter (pixel bar)
-        this.createBoostMeter(width - 90, 42);
+        // Boost meter label (right side, below speed)
+        const boostLabel = this.add.text(width - 16, 35, 'BOOST', {
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            color: '#888899'
+        }).setOrigin(1, 0);
+        this.hudContainer.add(boostLabel);
+
+        // Boost meter (right side, below label)
+        this.createBoostMeter(width - 86, 52);
 
         // Floating text pool for rewards
         this.floatingTexts = [];
