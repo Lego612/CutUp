@@ -303,9 +303,9 @@ class GameScene extends Phaser.Scene {
         if (this.laneChangeCooldown > 0) return;
 
         if (direction.startsWith('left')) {
-            this.player.changeLane(-1);
+            this.player.moveLeft();
         } else {
-            this.player.changeLane(1);
+            this.player.moveRight();
         }
         this.laneChangeCooldown = 100;
     }
