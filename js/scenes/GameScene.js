@@ -227,13 +227,8 @@ class GameScene extends Phaser.Scene {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
 
-        // Swipe detection
-        this.touchStartX = 0;
-        this.touchStartY = 0;
-        this.swipeThreshold = 30;
-
-        // Left touch zone (left half of screen below HUD)
-        const leftZone = this.add.rectangle(width / 4, height / 2 + 30, width / 2, height - 60, 0x000000, 0);
+        // Left touch zone (left half of screen)
+        const leftZone = this.add.rectangle(width / 4, height / 2, width / 2, height, 0x000000, 0);
         leftZone.setInteractive();
         leftZone.setDepth(50);
         leftZone.on('pointerdown', () => {
@@ -243,36 +238,14 @@ class GameScene extends Phaser.Scene {
             }
         });
 
-        // Right touch zone (right half of screen below HUD)
-        const rightZone = this.add.rectangle(width * 3 / 4, height / 2 + 30, width / 2, height - 60, 0x000000, 0);
+        // Right touch zone (right half of screen)
+        const rightZone = this.add.rectangle(width * 3 / 4, height / 2, width / 2, height, 0x000000, 0);
         rightZone.setInteractive();
         rightZone.setDepth(50);
         rightZone.on('pointerdown', () => {
             if (this.laneChangeCooldown <= 0) {
                 this.player.changeLane(1);
                 this.laneChangeCooldown = 100;
-            }
-        });
-
-        // Swipe detection for alternative control
-        this.input.on('pointerdown', (pointer) => {
-            this.touchStartX = pointer.x;
-            this.touchStartY = pointer.y;
-        });
-
-        this.input.on('pointerup', (pointer) => {
-            const dx = pointer.x - this.touchStartX;
-            const dy = pointer.y - this.touchStartY;
-
-            // Only process horizontal swipes
-            if (Math.abs(dx) > this.swipeThreshold && Math.abs(dx) > Math.abs(dy)) {
-                if (dx < 0 && this.laneChangeCooldown <= 0) {
-                    this.player.changeLane(-1);
-                    this.laneChangeCooldown = 100;
-                } else if (dx > 0 && this.laneChangeCooldown <= 0) {
-                    this.player.changeLane(1);
-                    this.laneChangeCooldown = 100;
-                }
             }
         });
     }
