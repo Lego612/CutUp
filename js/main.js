@@ -29,6 +29,12 @@ window.addEventListener('load', () => {
                 gravity: { y: 0 }
             }
         },
+        input: {
+            touch: {
+                capture: true
+            },
+            activePointers: 3
+        },
         scene: [BootScene, MenuScene, GameScene, GarageScene, GameOverScene],
         render: {
             pixelArt: false,
