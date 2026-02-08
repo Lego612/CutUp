@@ -54,7 +54,7 @@ const VEHICLES = {
         description: 'Reliable and balanced. Perfect for beginners.',
         color: 0x3498db,
         baseStats: {
-            topSpeed: 60,      // Slow starter car
+            topSpeed: 55,      // Slow starter car - ~495 max speed
             acceleration: 50,
             handling: 85,
             boost: 100,        // Boost power (base 100%)
@@ -70,8 +70,8 @@ const VEHICLES = {
         description: 'Nimble and quick. Great handling for tight squeezes.',
         color: 0x2ecc71,
         baseStats: {
-            topSpeed: 65,      // Slightly faster, better handling
-            acceleration: 60,
+            topSpeed: 60,      // Slightly faster - ~540 max speed
+            acceleration: 55,
             handling: 100,
             boost: 100,
             durability: 75,
@@ -86,10 +86,10 @@ const VEHICLES = {
         description: 'Fast and flashy. Higher risk, higher reward.',
         color: 0xe74c3c,
         baseStats: {
-            topSpeed: 100,     // First real speed upgrade
-            acceleration: 90,
+            topSpeed: 70,      // Faster - ~630 max speed
+            acceleration: 65,
             handling: 80,
-            boost: 110,        // Better base boost
+            boost: 100,
             durability: 65,
             earnings: 1.3
         },
@@ -102,10 +102,10 @@ const VEHICLES = {
         description: 'Raw American power. Fast but harder to handle.',
         color: 0xff6600,
         baseStats: {
-            topSpeed: 140,     // Big speed jump
-            acceleration: 120,
+            topSpeed: 80,      // Fast - ~720 max speed
+            acceleration: 75,
             handling: 65,
-            boost: 120,
+            boost: 100,
             durability: 80,
             earnings: 1.5
         },
@@ -118,10 +118,10 @@ const VEHICLES = {
         description: 'European precision. Blazing speed with great control.',
         color: 0xffcc00,
         baseStats: {
-            topSpeed: 180,     // Very fast
-            acceleration: 160,
+            topSpeed: 90,      // Very fast - ~810 max speed
+            acceleration: 85,
             handling: 85,
-            boost: 140,
+            boost: 100,
             durability: 50,
             earnings: 2.0
         },
@@ -134,10 +134,10 @@ const VEHICLES = {
         description: 'Ultimate speed machine. For true masters only.',
         color: 0x9900ff,
         baseStats: {
-            topSpeed: 250,     // INSANE speed - 4x faster than compact
-            acceleration: 200,
+            topSpeed: 100,     // Max speed - 900 max speed
+            acceleration: 95,
             handling: 90,
-            boost: 180,        // Best boost
+            boost: 100,
             durability: 40,
             earnings: 3.0
         },
