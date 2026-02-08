@@ -17,21 +17,21 @@ class BootScene extends Phaser.Scene {
 
         // Loading text with glow effect
         const loadingText = this.add.text(width / 2, height / 2 - 80, 'TRAFFIC CUT-UP', {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '32px',
             fontStyle: 'bold',
             color: '#00f5ff'
         }).setOrigin(0.5);
 
         const loadingSubtext = this.add.text(width / 2, height / 2 - 40, 'TYCOON', {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '24px',
             fontStyle: 'bold',
             color: '#ff00e5'
         }).setOrigin(0.5);
 
         const statusText = this.add.text(width / 2, height / 2 + 20, 'LOADING...', {
-            fontFamily: 'Rajdhani',
+            fontFamily: 'monospace',
             fontSize: '20px',
             color: '#a0a0b0'
         }).setOrigin(0.5);

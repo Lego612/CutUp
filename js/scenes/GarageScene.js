@@ -67,14 +67,14 @@ class GarageScene extends Phaser.Scene {
 
     createTitle(width) {
         this.add.text(width / 2, 40, 'GARAGE', {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '32px',
             fontStyle: 'bold',
             color: '#ff00e5'
         }).setOrigin(0.5);
 
         this.add.text(width / 2, 70, 'Vehicles & Upgrades', {
-            fontFamily: 'Rajdhani',
+            fontFamily: 'monospace',
             fontSize: '14px',
             color: '#7a7a8a'
         }).setOrigin(0.5);
@@ -89,7 +89,7 @@ class GarageScene extends Phaser.Scene {
         panel.strokeRoundedRect(width - 140, 15, 125, 40, 8);
 
         this.moneyText = this.add.text(width - 78, 35, `$${window.gameState.saveData.money.toLocaleString()}`, {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '18px',
             fontStyle: 'bold',
             color: '#00ff88'
@@ -150,7 +150,7 @@ class GarageScene extends Phaser.Scene {
         namePanel.strokeRoundedRect(width / 2 - 100, namePanelY - 15, 200, 35, 8);
 
         this.vehicleNameText = this.add.text(width / 2, namePanelY, 'Vehicle Name', {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '18px',
             fontStyle: 'bold',
             color: '#ffffff'
@@ -158,7 +158,7 @@ class GarageScene extends Phaser.Scene {
 
         // Lock/Price indicator
         this.vehicleStatusText = this.add.text(width / 2, namePanelY + 30, '', {
-            fontFamily: 'Rajdhani',
+            fontFamily: 'monospace',
             fontSize: '14px',
             fontStyle: 'bold',
             color: '#ffcc00'
@@ -180,7 +180,7 @@ class GarageScene extends Phaser.Scene {
 
         // Panel title
         this.add.text(panelX, panelY + 20, 'UPGRADES', {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '16px',
             fontStyle: 'bold',
             color: '#ff00e5'
@@ -207,7 +207,7 @@ class GarageScene extends Phaser.Scene {
 
         // Label with icon
         const label = this.add.text(-130, 0, `${config.icon} ${config.label}`, {
-            fontFamily: 'Rajdhani',
+            fontFamily: 'monospace',
             fontSize: '14px',
             fontStyle: 'bold',
             color: '#a0a0b0'
@@ -234,7 +234,7 @@ class GarageScene extends Phaser.Scene {
         btn.add(btnBg);
 
         const btnText = this.add.text(0, 0, '$0', {
-            fontFamily: 'Rajdhani',
+            fontFamily: 'monospace',
             fontSize: '13px',
             fontStyle: 'bold',
             color: '#00ff88'
@@ -302,7 +302,7 @@ class GarageScene extends Phaser.Scene {
         container.add(bg);
 
         const arrow = this.add.text(0, 0, text, {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '24px',
             color: '#00f5ff'
         }).setOrigin(0.5);
@@ -336,7 +336,7 @@ class GarageScene extends Phaser.Scene {
         btn.add(bg);
 
         const text = this.add.text(0, 0, '← BACK', {
-            fontFamily: 'Orbitron',
+            fontFamily: 'monospace',
             fontSize: '16px',
             fontStyle: 'bold',
             color: '#ffffff'
