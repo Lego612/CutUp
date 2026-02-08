@@ -229,23 +229,31 @@ class GameScene extends Phaser.Scene {
         const height = this.cameras.main.height;
         const scene = this;
 
-        // Create invisible interactive zones
-        this.leftTouchZone = this.add.rectangle(width / 4, height / 2, width / 2, height, 0xff0000, 0);
+        // Create speed control buttons (boost and brake)
+        this.createSpeedControlButtons();
+
+        // Create invisible interactive zones for lane changes (upper portion of screen)
+        const laneControlHeight = height - 120; // Leave space for speed buttons
+
+        this.leftTouchZone = this.add.rectangle(width / 4, laneControlHeight / 2, width / 2, laneControlHeight, 0xff0000, 0);
         this.leftTouchZone.setInteractive({ useHandCursor: true });
-        this.leftTouchZone.setDepth(1000);
+        this.leftTouchZone.setDepth(999);
         this.leftTouchZone.on('pointerdown', () => {
             this.handleTouchInput('left-phaser');
         });
 
-        this.rightTouchZone = this.add.rectangle(width * 3 / 4, height / 2, width / 2, height, 0x0000ff, 0);
+        this.rightTouchZone = this.add.rectangle(width * 3 / 4, laneControlHeight / 2, width / 2, laneControlHeight, 0x0000ff, 0);
         this.rightTouchZone.setInteractive({ useHandCursor: true });
-        this.rightTouchZone.setDepth(1000);
+        this.rightTouchZone.setDepth(999);
         this.rightTouchZone.on('pointerdown', () => {
             this.handleTouchInput('right-phaser');
         });
 
-        // Also add global Phaser input as backup
+        // Also add global Phaser input as backup (excluding button area)
         this.input.on('pointerdown', (pointer) => {
+            // Ignore if touching the speed control button area
+            if (pointer.y > height - 100) return;
+
             if (pointer.x < width / 2) {
                 this.handleTouchInput('left-global');
             } else {
@@ -257,19 +265,30 @@ class GameScene extends Phaser.Scene {
         const canvas = this.game.canvas;
 
         const handleDOMTouch = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            let clientX;
+            // Get touch position
+            let clientX, clientY;
             if (e.touches && e.touches.length > 0) {
                 clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
             } else if (e.changedTouches && e.changedTouches.length > 0) {
                 clientX = e.changedTouches[0].clientX;
+                clientY = e.changedTouches[0].clientY;
             } else {
                 clientX = e.clientX;
+                clientY = e.clientY;
             }
 
             const rect = canvas.getBoundingClientRect();
+
+            // Calculate relative position
+            const relativeY = (clientY - rect.top) / rect.height * height;
+
+            // Ignore if touching the speed control button area (let Phaser handle it)
+            if (relativeY > height - 100) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
             const canvasMidpoint = rect.left + rect.width / 2;
 
             if (clientX < canvasMidpoint) {
@@ -281,6 +300,167 @@ class GameScene extends Phaser.Scene {
 
         canvas.addEventListener('touchstart', handleDOMTouch, { passive: false });
         canvas.addEventListener('click', handleDOMTouch, { passive: false });
+    }
+
+    createSpeedControlButtons() {
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
+        const buttonSize = 70;
+        const buttonY = height - 55;
+        const buttonMargin = 20;
+
+        // Container for speed control buttons
+        this.speedButtonsContainer = this.add.container(0, 0);
+        this.speedButtonsContainer.setDepth(1001);
+
+        // BRAKE button (left side) - Red/Orange
+        const brakeX = buttonMargin + buttonSize / 2;
+
+        // Brake button background
+        const brakeBg = this.add.graphics();
+        brakeBg.fillStyle(0x331111, 0.9);
+        brakeBg.fillRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+        brakeBg.lineStyle(3, 0xff3333, 1);
+        brakeBg.strokeRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+        // Inner glow
+        brakeBg.lineStyle(1, 0xff6666, 0.5);
+        brakeBg.strokeRect(brakeX - buttonSize / 2 + 3, buttonY - buttonSize / 2 + 3, buttonSize - 6, buttonSize - 6);
+        this.speedButtonsContainer.add(brakeBg);
+
+        // Brake icon (down arrow)
+        const brakeIcon = this.add.text(brakeX, buttonY - 5, '▼', {
+            fontFamily: 'monospace',
+            fontSize: '28px',
+            color: '#ff4444'
+        }).setOrigin(0.5);
+        this.speedButtonsContainer.add(brakeIcon);
+
+        // Brake label
+        const brakeLabel = this.add.text(brakeX, buttonY + 22, 'SLOW', {
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            fontStyle: 'bold',
+            color: '#ff6666'
+        }).setOrigin(0.5);
+        this.speedButtonsContainer.add(brakeLabel);
+
+        // Brake touch zone
+        this.brakeTouchZone = this.add.rectangle(brakeX, buttonY, buttonSize + 10, buttonSize + 10, 0xff0000, 0);
+        this.brakeTouchZone.setInteractive({ useHandCursor: true });
+        this.brakeTouchZone.setDepth(1002);
+
+        this.brakeTouchZone.on('pointerdown', () => {
+            if (this.isGameOver) return;
+            this.player.brake();
+            this.touchBraking = true;
+            // Visual feedback
+            brakeIcon.setColor('#ffff00');
+            brakeBg.clear();
+            brakeBg.fillStyle(0x442211, 0.95);
+            brakeBg.fillRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            brakeBg.lineStyle(3, 0xff6600, 1);
+            brakeBg.strokeRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+        });
+
+        this.brakeTouchZone.on('pointerup', () => {
+            if (this.touchBraking) {
+                this.player.releaseBrake();
+                this.touchBraking = false;
+            }
+            // Reset visual
+            brakeIcon.setColor('#ff4444');
+            brakeBg.clear();
+            brakeBg.fillStyle(0x331111, 0.9);
+            brakeBg.fillRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            brakeBg.lineStyle(3, 0xff3333, 1);
+            brakeBg.strokeRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            brakeBg.lineStyle(1, 0xff6666, 0.5);
+            brakeBg.strokeRect(brakeX - buttonSize / 2 + 3, buttonY - buttonSize / 2 + 3, buttonSize - 6, buttonSize - 6);
+        });
+
+        this.brakeTouchZone.on('pointerout', () => {
+            if (this.touchBraking) {
+                this.player.releaseBrake();
+                this.touchBraking = false;
+            }
+            // Reset visual
+            brakeIcon.setColor('#ff4444');
+            brakeBg.clear();
+            brakeBg.fillStyle(0x331111, 0.9);
+            brakeBg.fillRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            brakeBg.lineStyle(3, 0xff3333, 1);
+            brakeBg.strokeRect(brakeX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            brakeBg.lineStyle(1, 0xff6666, 0.5);
+            brakeBg.strokeRect(brakeX - buttonSize / 2 + 3, buttonY - buttonSize / 2 + 3, buttonSize - 6, buttonSize - 6);
+        });
+
+        // BOOST button (right side) - Cyan/Blue
+        const boostX = width - buttonMargin - buttonSize / 2;
+
+        // Boost button background
+        const boostBg = this.add.graphics();
+        boostBg.fillStyle(0x112233, 0.9);
+        boostBg.fillRect(boostX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+        boostBg.lineStyle(3, 0x00ffff, 1);
+        boostBg.strokeRect(boostX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+        // Inner glow
+        boostBg.lineStyle(1, 0x66ffff, 0.5);
+        boostBg.strokeRect(boostX - buttonSize / 2 + 3, buttonY - buttonSize / 2 + 3, buttonSize - 6, buttonSize - 6);
+        this.speedButtonsContainer.add(boostBg);
+
+        // Boost icon (up arrow)
+        const boostIcon = this.add.text(boostX, buttonY - 5, '▲', {
+            fontFamily: 'monospace',
+            fontSize: '28px',
+            color: '#00ffff'
+        }).setOrigin(0.5);
+        this.speedButtonsContainer.add(boostIcon);
+
+        // Boost label
+        const boostLabel = this.add.text(boostX, buttonY + 22, 'BOOST', {
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            fontStyle: 'bold',
+            color: '#66ffff'
+        }).setOrigin(0.5);
+        this.speedButtonsContainer.add(boostLabel);
+
+        // Boost touch zone
+        this.boostTouchZone = this.add.rectangle(boostX, buttonY, buttonSize + 10, buttonSize + 10, 0x0000ff, 0);
+        this.boostTouchZone.setInteractive({ useHandCursor: true });
+        this.boostTouchZone.setDepth(1002);
+
+        // Store references for visual feedback
+        this.boostButtonElements = { bg: boostBg, icon: boostIcon, x: boostX, y: buttonY, size: buttonSize };
+
+        this.boostTouchZone.on('pointerdown', () => {
+            if (this.isGameOver) return;
+            const boosted = this.player.boost();
+            if (boosted) {
+                // Visual feedback - active boost
+                boostIcon.setColor('#ffff00');
+                boostBg.clear();
+                boostBg.fillStyle(0x224433, 0.95);
+                boostBg.fillRect(boostX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+                boostBg.lineStyle(3, 0x00ff88, 1);
+                boostBg.strokeRect(boostX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            }
+        });
+
+        this.boostTouchZone.on('pointerup', () => {
+            // Reset visual
+            boostIcon.setColor('#00ffff');
+            boostBg.clear();
+            boostBg.fillStyle(0x112233, 0.9);
+            boostBg.fillRect(boostX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            boostBg.lineStyle(3, 0x00ffff, 1);
+            boostBg.strokeRect(boostX - buttonSize / 2, buttonY - buttonSize / 2, buttonSize, buttonSize);
+            boostBg.lineStyle(1, 0x66ffff, 0.5);
+            boostBg.strokeRect(boostX - buttonSize / 2 + 3, buttonY - buttonSize / 2 + 3, buttonSize - 6, buttonSize - 6);
+        });
+
+        // Track touch braking state
+        this.touchBraking = false;
     }
 
     handleTouchInput(direction) {
