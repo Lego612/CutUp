@@ -639,9 +639,11 @@ class GameScene extends Phaser.Scene {
         // Money
         this.moneyText.setText(`$${this.scoreManager.runMoney.toLocaleString()}`);
 
-        // Speed (convert to fake MPH)
-        const speed = Math.floor(this.player.getSpeed() * 0.3);
-        this.speedText.setText(`${speed} MPH`);
+        // Speed (convert to realistic MPH)
+        // Scale: 150 px/s = ~50 MPH (base), 900 px/s = ~180 MPH (max)
+        const rawSpeed = this.player.getSpeed();
+        const mph = Math.floor(25 + rawSpeed * 0.17);
+        this.speedText.setText(`${mph} MPH`);
 
         // Boost meter
         const boostProgress = this.player.getBoostProgress();
